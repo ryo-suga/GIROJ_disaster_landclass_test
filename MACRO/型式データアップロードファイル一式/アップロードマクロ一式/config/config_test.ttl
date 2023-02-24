@@ -1,0 +1,10 @@
+; *************************************
+; •Ï”İ’è
+; *************************************
+username = 'batchtest'
+passwdname = 'test'
+hostname = '192.168.220.7'
+port = '10022'
+passwdfile = 'password_test.ini'
+waitprompt = '-bash-4.1$'
+shell = '/var/www/web/batchtest/www/root/php-work/batch/modelupload/ModelUpload.sh'

@@ -1,0 +1,74 @@
+; *************************************
+; 変数設定
+; *************************************
+
+; 引数チェック
+strcompare param2 ''
+if result = 0 then
+ setexitcode 1
+ call end
+endif
+
+; 引数の値をセット
+include_file = 'config/'
+strconcat include_file param2
+
+; 設定ファイルをインクルード
+include include_file
+
+; パスワード取得
+getpassword passwdfile passwdname passwd
+
+; 接続先の設定
+constr = hostname
+strconcat constr ':'
+strconcat constr port
+strconcat constr ' /ssh /auth=password /user='
+strconcat constr username
+strconcat constr ' /passwd='
+strconcat constr passwd
+strconcat constr ' /I'
+
+; *************************************
+; 接続処理
+; *************************************
+connect constr
+
+if result <> 2 then
+ setexitcode 1
+ call end
+endif
+
+
+; *************************************
+; シェル実行
+; *************************************
+wait waitprompt
+sendln "sh " shell
+
+call getError
+
+str2int exitcode inputstr
+setexitcode exitcode
+
+messagebox inputstr 'result'
+
+wait waitprompt
+sendln "exit"
+call end
+
+; *************************************
+; 終了処理
+; *************************************
+:end
+ end
+ return
+ 
+; *************************************
+; エラーコード取得（inputstr）
+; *************************************
+:getError
+  setsync 1
+  recvln
+  recvln
+return
