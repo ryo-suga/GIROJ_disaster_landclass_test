@@ -51,7 +51,7 @@ function selectCarTypeModel() {
 	//----------------------------------------------------------------------------------------------
 	document.getElementById("textareaModel").value = "";
 	//メーカー名・車名検索項目リセット
-	document.getElementById("appformCarTypeMakerCar").value = "";
+	document.getElementById("appformPrefectures").value = "";
 	//メーカ名再検索
 	setMakerName();
 	//メーカ名クリア
@@ -69,15 +69,15 @@ function selectCarTypeMakerCar() {
 	document.getElementById("appformSelectedCarIdx").value = null;
 
 	//メーカ名再検索
-	setMakerName();
+	setMunicipality();
 	//メーカ名クリア
-	document.getElementById("appformMakerName").value = "";
+	document.getElementById("appformMunicipality").value = "";
 	//車名再検索
-	setCarName();
+	//setCarName();
 
 	//型式検索項目リセット
-	document.getElementById("appformCarTypeModel").value = "";
-	document.getElementById("textareaModel").value = "";
+	//document.getElementById("appformCarTypeModel").value = "";
+	//document.getElementById("textareaModel").value = "";
 }
 
 /**
@@ -103,22 +103,22 @@ function selectCarName() {
 //リスト取得
 //=================================================================================================
 /**
- *　メーカー名リスト取得
+ *　市区町村リスト取得
  */
-function setMakerName() {
-	var car_type_maker_car = $("#appformCarTypeMakerCar").val();
-	var form_info = { "car_type_maker_car" : car_type_maker_car };
+function setMunicipality() {
+	var prefectures = $("#appformPrefectures").val();
+	var form_info = { "prefectures" : prefectures };
 	$.post({
-		url:METHOD_GET_MAKERLIST,
+		url:METHOD_GET_MUNICIPALITYRLIST,
 		data:form_info,
 	}).done(function(d){
 			var data = JSON.parse(d);
-			$("#appformMakerName").children().remove();
+			$("#appformMunicipality").children().remove();
 			for(var i in data) {
-				$("#appformMakerName").append($("<option>").html(escapeHtml(data[i]["view"])).val(escapeHtml(data[i]["value"])));
+				$("#appformMunicipality").append($("<option>").html(escapeHtml(data[i]["view"])).val(escapeHtml(data[i]["value"])));
 			}
-			if(data.length <= 1) {document.getElementById("appformMakerName").disabled = true;}
-			else { document.getElementById("appformMakerName").disabled = false; }
+			if(data.length <= 1) {document.getElementById("appformMunicipality").disabled = true;}
+			else { document.getElementById("appformMunicipality").disabled = false; }
 		}
 	).fail( function(){
 		//エラー表示
@@ -131,7 +131,7 @@ function setMakerName() {
  *　車名リスト取得
  */
 function setCarName() {
-	var car_type_maker_car = $("#appformCarTypeMakerCar").val();
+	var car_type_maker_car = $("#appformPrefectures").val();
 	var maker_name = $("#appformMakerName").val();
 	var form_info = {   "car_type_maker_car" : car_type_maker_car,
 						"maker_name" : maker_name 
@@ -160,7 +160,7 @@ function setCarName() {
  *　メーカー名リスト取得
  */
 function setMakerNameHistory() {
-	var car_type_maker_car = $("#appformCarTypeMakerCar").val();
+	var car_type_maker_car = $("#appformPrefectures").val();
 	var form_info = { "car_type_maker_car" : car_type_maker_car };
 	$.post({
 		url:METHOD_GET_MAKERLIST,
@@ -192,7 +192,7 @@ function setMakerNameHistory() {
  *　車名リスト取得
  */
 function setCarNameHistory() {
-	var car_type_maker_car = $("#appformCarTypeMakerCar").val();
+	var car_type_maker_car = $("#appformPrefectures").val();
 	var maker_name = $("#appformMakerName").val();
 	var form_info = {   "car_type_maker_car" : car_type_maker_car,
 						"maker_name" : maker_name 
@@ -270,7 +270,7 @@ function searchModel() {
  *　検索関数（メーカー名、車名）
  */
  function searchMakerCar() {
-	var car_type_maker_car = document.getElementById('appformCarTypeMakerCar').value;
+	var car_type_maker_car = document.getElementById('appformPrefectures').value;
 	var maker_name		   = document.getElementById('appformMakerName').value;
 	var car_name 		   = document.getElementById('appformCarName').value;
 	var form_info = { "car_type_maker_car" : car_type_maker_car,
