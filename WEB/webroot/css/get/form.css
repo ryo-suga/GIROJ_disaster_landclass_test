@@ -509,7 +509,7 @@ fieldset[disabled] .btn-default.focus {
 	padding-bottom:10px;
 }
 .searchTDetail table th,
-.searchTDetail table td{
+.searchTDetail table td,{
 	border-bottom:solid 1px #999;
 	padding:5px;
 }
@@ -666,4 +666,30 @@ dl#attention{margin:0 20px 40px;}
 	margin:10px 15px;
 	left: 0;
 }
+}
+/*202302追加 saito*/
+.suisaiArea {
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.suisaiArea table {
+	width: 100%;
+}
+.searchTDetail.suisaiArea table td strong{
+	font-size: 3.6rem;
+	margin-left:-20px;
+}
+
+@media screen and (min-width: 641px) and (max-width: 1000px) {
+	.suisaiArea {
+		width: auto;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	.suisaiArea {
+		width: auto;
+	}
 }

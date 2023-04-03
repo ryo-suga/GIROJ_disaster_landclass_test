@@ -14,28 +14,22 @@ class AccessLog extends AppModel{
 	//using table
 	var $useTable = 'tbl_access_log';
 
-	public function isValid($maker_name, $car_name, $model){
+	public function isValid($prefectures, $municipality){
 		$is_error = false;
 
-		//メーカー名
+		//都道府県名
         //--------------------------------------------------------------------------------------------------------------
-        if( $maker_name ==='') { $is_error = true;} 
-        if( !preg_match('/^[ァ-ヶ､ー -\~･]{1,20}$/u', $maker_name)) {
+        if( $prefectures ==='') { $is_error = true;} 
+        //if( !preg_match('/^[一-龠々]{1,4}$/u', $prefectures)) {
+        if( !preg_match(PREG_PREFECTURES_NAME, $prefectures)) {
             $is_error = true;
         }
      
-        //車名
+        //市区町村名
         //--------------------------------------------------------------------------------------------------------------
-        if( $car_name ==="")  { $is_error = true;} 
-		if( !preg_match('/^[ァ-ヶ､ー -\~･]{1,80}$/u', $car_name)) 	{
+        if( $municipality ==="")  { $is_error = true;} 
+		if( !preg_match(PREG_MUNICIPALITY_NAME, $municipality)) 	{
             $is_error = true;
-        }
-		
-		//型式
-        //--------------------------------------------------------------------------------------------------------------
-        if( $model === "") { $is_error = true;}
-		if( !preg_match('/^[ -\~]{1,15}$/',$model )) {
-			$is_error = true;
         }
 		
 		return !$is_error;

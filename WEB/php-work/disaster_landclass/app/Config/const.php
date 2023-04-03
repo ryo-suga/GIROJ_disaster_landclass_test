@@ -4,51 +4,66 @@
  *
  *
  */
- 
-//自動車タイプ「軽」
-//define('CAR_TYPE_KEI','47');
- 
-//都道府県マップ　　
-//$config['PREFECTURES_MAP'] = array(
-//	'1' => '北海道',
-//	'2' => '青森県',
-//	'3' => '岩手県',
-//	'4' => '宮城県',
-//	'5' => '秋田県',
-//);
-$new_mysqli = new mysqli('localhost', 'root', '', 'disaster_landclass_search');
 
-$sql = 'select prefectures from tbl_prefectures_mst ORDER BY create_date ASC';
-
-if ($PREFECTURES_MAP = $new_mysqli->query($sql)) {
-//変更前
-//foreach($PREFECTURES_MAP as $PREFECTURES_MAP_val){
-//    $PREFECTURES_MAP .= "<option value='". $PREFECTURES_MAP_val['prefectures'];
-//    $PREFECTURES_MAP .= "'>". $PREFECTURES_MAP_val['prefectures']. "</option>";
-//}
-//変更後
-foreach($PREFECTURES_MAP as $PREFECTURES_MAP_val){
-	$config['PREFECTURES_MAP'][$PREFECTURES_MAP_val['prefectures']] = $PREFECTURES_MAP_val['prefectures'];
-	}
-}
-
-//国産/外車コード　　連想配列
-$config['AREA_CODE_MAP'] = array(
-	'1' => '国産',
-	'2' => '外車',
+ //都道府県
+//=================================================================================================
+$config['PREFECTURE_LIST'] = array(
+	'北海道',
+	'青森県'  ,
+	'岩手県'  ,
+	'宮城県'  ,
+	'秋田県'  ,
+	'山形県'  , 
+	'福島県'  , 
+	'茨城県'  , 
+	'栃木県'  , 
+	'群馬県'  , 
+	'埼玉県'  ,
+	'千葉県'  ,
+	'東京都'  ,
+	'神奈川県',
+	'新潟県'  ,
+	'富山県'  ,
+	'石川県'  ,
+	'福井県'  ,
+	'山梨県'  ,
+	'長野県'  ,
+	'岐阜県'  ,
+	'静岡県'  ,
+	'愛知県'  ,
+	'三重県'  ,
+	'滋賀県'  ,
+	'京都府'  ,
+	'大阪府'  ,
+	'兵庫県'  ,
+	'奈良県'  ,
+	'和歌山県',
+	'鳥取県'  ,
+	'島根県'  ,
+	'岡山県'  ,
+	'広島県'  ,
+	'山口県'  ,
+	'徳島県'  ,
+	'香川県'  ,
+	'愛媛県'  ,
+	'高知県'  ,
+	'福岡県'  ,
+	'佐賀県'  ,
+	'長崎県'  ,
+	'熊本県'  ,
+	'大分県'  ,
+	'宮崎県'  ,
+	'鹿児島県',
+	'沖縄県'  
 );
 
 //エラーコード
 //=================================================================================================
-define('NOT_FOUND','該当する型式はありません');
-define('NOT_SELECT_CAR_TYPE','自動車タイプが選択されていません');
-define('NOT_INPUT_MODEL','型式が入力されていません');
-define('NOT_SELECT_MAKER_NAME','メーカーが選択されていません');
-define('NOT_SELECT_CAR_NAME','車名が選択されていません');
-define('INVALID_MODEL','型式が不正です');
 define('INVALID_PARAM','入力値が不正です');
-define('WF0001', 'DBアクセスに失敗しました');
-define('ACCESSLOG_WRITE_ERROR', 'アクセスログ書き込みに失敗しました。');
+define('NOT_SELECT_PREFECTURES','都道府県が選択されていません');
+define('NOT_SELECT_MUNICIPALITY','市区町村が選択されていません');
+//define('WF0001', 'DBアクセスに失敗しました');
+//define('ACCESSLOG_WRITE_ERROR', 'アクセスログ書き込みに失敗しました。');
 
 //エラーページ用文字列
 //=================================================================================================
@@ -60,14 +75,10 @@ define('INTERNAL_ERROR', '現在サービスは利用できません');
 
 //バリデーション
 //=================================================================================================
-//自動車ﾀｲﾌﾟ
-define('PREG_CAR_TYPE', '/^[124]{1,1}$/');
-//型式
-define('PREG_MODEL', '/^[ -\~]{1,15}$/');
-//メーカー名
-define('PREG_MAKER_NAME', '/^[（）＆ァ-ヶ､ー -\~･]{1,20}$/u');
-//車名
-define('PREG_CAR_NAME', '/^[（）ァ-ヶ､ー -\~･]{1,80}$/u');
+//都道府県名 TODO:バリデーション修正必要
+define('PREG_PREFECTURES_NAME', '/^[一-龠々]{1,4}$/u');
+//市区町村名
+define('PREG_MUNICIPALITY_NAME', '/^[一-龠々ぁ-んァ-ヶー]{1,20}$/u');
 
 
 //取り込みファイル情報
@@ -90,17 +101,16 @@ define('HEAD_JS','include/head/head_js');
 define('PATH_INCLUDE_HTML','/var/www/web/kata.giroj.or.jp/www/root/ssldocs/common/inc/');
 
 define('HEADER',PATH_INCLUDE_HTML.'header.txt');
-define('AUTO_MOBILE_VEHICLE_MODEL',PATH_INCLUDE_HTML.'m_rate_automobile_vehicle_model.txt');
+define('RATE_FIRE_SUISAI',PATH_INCLUDE_HTML.'m_rate_fire_suisai.txt');
 define('SUBNAV_RATEMAKING',PATH_INCLUDE_HTML.'subnav_ratemaking.txt');
 define('NAV_SP',PATH_INCLUDE_HTML.'nav_sp.txt');
 define('FOOTER',PATH_INCLUDE_HTML.'footer.txt');
 define('POP_AEB',PATH_INCLUDE_HTML.'pop_aeb.txt');
-define('BREAD_CRUMB',PATH_INCLUDE_HTML.'breadCrumb.txt');
-define('KATA_FAQ',PATH_INCLUDE_HTML.'vehicle_model_faq.txt');
-define('KATA_DETAIL_ANNOTATION',PATH_INCLUDE_HTML.'katashiki_info.txt');
+define('BREAD_CRUMB',PATH_INCLUDE_HTML.'breadCrumb_suisai.txt');
+define('SUISAI_FAQ',PATH_INCLUDE_HTML.'suisai_faq.txt');
 
 //エラーページ(html)
-define('PATH_INCLUDE_ERROR_HTML', '/ratemaking/automobile/vehicle_model/common/error/');
+define('PATH_INCLUDE_ERROR_HTML', '/ratemaking/fire/touchi/common/error/');
 define('ERROR_404',PATH_INCLUDE_ERROR_HTML.'404.html');
 define('ERROR_503',PATH_INCLUDE_ERROR_HTML.'503.html');
 
@@ -123,3 +133,7 @@ define('JQUERY_MIGRATE',PATH_INCLUDE_JS.'jquery-migrate-1.4.1.min.js');
 define('MAME',PATH_INCLUDE_JS.'mame');
 define('COMMON',PATH_INCLUDE_JS.'common');
 define('PLACEHOLDER',PATH_INCLUDE_JS.'jquery.ah-placeholder');
+
+//その他設定値
+//=================================================================================================
+define('LANDCLASS_NUM_MAX', 6);
