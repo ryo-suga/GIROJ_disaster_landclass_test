@@ -24,6 +24,7 @@ abstract class Model {
 		$this->setColumnName('upd_prg');
 		$this->setColumnValue('create_date', $now->format('ymdHis'));
 		$this->setColumnValue('update_date', $now->format('ymdHis'));
+
 	}
 	
     //setter
@@ -86,6 +87,7 @@ abstract class Model {
 			$name = $this->column_set[$i]['column_name'];
 			if($name == $column_name) {
 				$column_value = $this->column_set[$i]['column_value'];
+				//echo "now";
 			}
 		}
 		return $column_value;
@@ -166,6 +168,7 @@ abstract class Model {
 			$prepare_str_columns .= $column['column_name'];
 			$prepare_str_placeholders .= ':'.$column['column_name'];
 		}
+		
   		try {
 			//クエリ作成
 			$query = $dbh->prepare('INSERT INTO '.$this->getTableName().'('.$prepare_str_columns.') VALUES('.$prepare_str_placeholders.')');
@@ -173,6 +176,7 @@ abstract class Model {
 				$query->bindParam(':'.$column['column_name'], $column['column_value'], PDO::PARAM_STR);
 			}
 			$ret = $query->execute();
+			
 		} catch (PDOException $e ) {
 			$is_error = true;
 			return !$is_error;

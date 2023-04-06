@@ -5,8 +5,7 @@
  */
 ini_set('memory_limit', '512M');
 
-require_once('/var/www/web/batch/www/root/php-work/batch/GetMonthlyAccessLog/config/ConfigGetMonthlyAccessLog.php');
-
+require_once('/var/www/landclass_batch/batch/GetMonthlyAccessLog/config/ConfigGetMonthlyAccessLog.php');
 
 // メインフロー実行
 $class_batch = new GetMonthlyAccessLog();
@@ -122,6 +121,7 @@ class GetMonthlyAccessLog {
 		$is_error = false;
 		
 		//DB接続
+		
 		$result = $this->setDBConnection(Config::getDsn(), Config::getUser(), Config::getPassword(),array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
 		if(!$result) {
 			return false;
@@ -161,7 +161,8 @@ class GetMonthlyAccessLog {
 				// 2017/11/01 プロキシ経由の場合はsrc_ipが複数になる場合がある(「クライアントIP, プロキシ1 IP, プロキシ2 IP・・・」)
 				//            そのため、カンマ以降は切り捨ててクライアントIPのみ取得するよう変更
 				$src_ip = explode(',', $record['src_ip']); 
-                $outputStr = array(date_format($access_date, 'Y-m-d'), date_format($access_date, 'H:i:s'), $record['model'], $src_ip[0], $record['user_agent']);
+                //$outputStr = array(date_format($access_date, 'Y-m-d'), date_format($access_date, 'H:i:s'), $record['model'], $src_ip[0], $record['user_agent']);
+				$outputStr = array(date_format($access_date, 'Y-m-d'), date_format($access_date, 'H:i:s'), $record['prefectures'], $record['municipality'], $src_ip[0], $record['user_agent']);
                 mb_convert_variables('sjis', 'utf-8', $outputStr);
                 fputcsv($handler, $outputStr);
             }
@@ -241,20 +242,21 @@ class GetMonthlyAccessLog {
 	 * @return boolean 処理結果 結果レコード
 	 */
 	public function selectMonthlyAccessLog() {
-
+	
 		try {
 			$valueArray = array();
 			array_push($valueArray, $this->getTargetYYYYMM());
+			
 			// 検索条件セット
 			if (!$this->getAccessLog()->setSearchCondition('MONTHLY', $valueArray)) {
 				$this->addErrorLogMessage(ConfigGetMonthlyAccessLog::getErrorMsg('FATAL_ERROR'), CONFIG::$LOG_LEVEL_FATAL);
 				$this->setFlgFatalError(true);
 				throw new Exception();
 			}
-
+			
 			// ソート条件セット
 			$this->getAccessLog()->setSortCondition('MONTHLY');
-
+			
 			// アクセスログ参照
 			$row = $this->getAccessLog()->select($this->getDBH());
 		

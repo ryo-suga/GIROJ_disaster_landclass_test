@@ -1,13 +1,13 @@
 <?php
 
 /**
- * 車名マスタ管理クラス
- *
+ * アクセスログ管理クラス
+ * 更新 2023/04/06
  *
  */
-include_once('common/model/Model.php');
+include_once('/var/www/landclass_batch/common/model/Model.php');
 
-class AccessLog extends Model{
+class AccessLog extends Model{	
 	// 検索条件
 	private $searchConditionNameArray = array(
 		'MONTHLY' => 0,
@@ -24,18 +24,19 @@ class AccessLog extends Model{
 		'MONTHLY' => 0,
 	);
 	private $sortStrArray = array(
-		"access_date, model",
+		"access_date, prefectures ,municipality",
 	);
 
 	public function __construct(){
 		parent::__construct();
+
 		$this->setTableName('tbl_access_log');
 		$this->setColumnName('access_date');
-		$this->setColumnName('maker_name');
-		$this->setColumnName('car_name');
-		$this->setColumnName('model');
+		$this->setColumnName('prefectures');
+		$this->setColumnName('municipality');
 		$this->setColumnName('src_ip');
 		$this->setColumnName('user_agent');
+		
 	}
 
 	// 検索条件セット

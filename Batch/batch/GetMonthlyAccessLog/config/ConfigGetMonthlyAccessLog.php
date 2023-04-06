@@ -1,11 +1,11 @@
 <?php
-require_once("/var/www/web/batch/www/root/php-work/common/config/CONFIG.php");
+require_once("/var/www/landclass_batch/common/config/CONFIG.php");
 
 //定数定義　パス情報
 //=====================================================================================================================
 define('PATH_ERROR_LOG', Config::$path_root.'output/GetMonthlyAccessLog/');
 define('PATH_OUTPUT_CSV', Config::$path_root.'output/GetMonthlyAccessLog/csv/');
-define('PATH_ACCESS_LOG', Config::$path_db_model.'accessLog/');
+define('PATH_ACCESS_LOG', Config::$path_root . Config::$path_db_landclass.'accessLog/');
 
 class ConfigGetMonthlyAccessLog {
 	
@@ -22,7 +22,8 @@ class ConfigGetMonthlyAccessLog {
 	private static $col_names = array(
 		'年月日',
 		'時間',
-		'型式',
+		'都道府県',
+		'市区町村',
 		'接続元IPアドレス',
 		'ユーザーエージェント',
 	);

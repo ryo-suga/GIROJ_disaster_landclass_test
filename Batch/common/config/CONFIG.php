@@ -3,20 +3,20 @@ ob_start(function($buf){ return mb_convert_encoding($buf, 'sjis', 'utf8'); });
 /**
  * バッチ処理　コンフィグ　親
  * パスは末尾に/（スラッシュ）をつける。
- *　更新：2017/10/16
+ *　更新：2023/04/06
  */
 
 class CONFIG {
 		
 	//パス情報
     //==================================================================================================================
-	public static $path_root 	 = '/var/www/web/batch/www/root/php-work/';
-	public static $path_db_model = 'common/model/';
+    public static $path_root 	 = '/var/www/landclass_batch/';
+    public static $path_db_landclass = 'common/model/';
 	
     //DBアクセス情報
     //==================================================================================================================
-    private static $dbname   = 'model_class_search';
-    private static $hostname = '172.27.112.46';
+    private static $dbname   = 'disaster_landclass_search';
+    private static $hostname = 'katashiki-dev';
     private static $charset  = 'utf8';
 	private static $user 	 = 'appuser';
     private static $password = 'passw0rd';
