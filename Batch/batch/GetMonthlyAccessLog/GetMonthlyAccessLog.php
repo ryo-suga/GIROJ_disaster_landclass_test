@@ -161,7 +161,6 @@ class GetMonthlyAccessLog {
 				// 2017/11/01 プロキシ経由の場合はsrc_ipが複数になる場合がある(「クライアントIP, プロキシ1 IP, プロキシ2 IP・・・」)
 				//            そのため、カンマ以降は切り捨ててクライアントIPのみ取得するよう変更
 				$src_ip = explode(',', $record['src_ip']); 
-                //$outputStr = array(date_format($access_date, 'Y-m-d'), date_format($access_date, 'H:i:s'), $record['model'], $src_ip[0], $record['user_agent']);
 				$outputStr = array(date_format($access_date, 'Y-m-d'), date_format($access_date, 'H:i:s'), $record['prefectures'], $record['municipality'], $src_ip[0], $record['user_agent']);
                 mb_convert_variables('sjis', 'utf-8', $outputStr);
                 fputcsv($handler, $outputStr);
