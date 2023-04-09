@@ -111,14 +111,6 @@ class SearchController extends AppController{
 			$is_error = true;
 			$error_msgs[] = NOT_SELECT_MUNICIPALITY;
 		}
-
-		//バリデーション
-		//-----------------------------------------------------------------------------------------
-		if(!preg_match(PREG_PREFECTURES_NAME, $form_info['prefectures'])
-		 ||!preg_match(PREG_MUNICIPALITY_NAME, $form_info['municipality'])) {
-			$is_error = true;
-			$error_msgs[] = INVALID_PARAM;
-		}
 		
 		//エラー確認
 		//-----------------------------------------------------------------------------------------
