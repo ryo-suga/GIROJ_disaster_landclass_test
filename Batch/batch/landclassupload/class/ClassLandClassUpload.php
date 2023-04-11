@@ -180,7 +180,7 @@ class ClassLandClassUpload {
 		
 			// 3) ファイル名フォーマット確認
 			//-------------------------------------------------------------------------------------------------------------
-			$result = $this->isValid_Name($this->getFileObj()->getFileName());
+			$result = $this->isValid_Name(mb_convert_encoding($this->getFileObj()->getFileName(), "SJIS", "auto"));
 			
 			if(!$result) { 
 				$is_error = true;
