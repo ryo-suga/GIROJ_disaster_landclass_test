@@ -4,7 +4,7 @@ require_once("/var/www/landclass_batch/common/config/CONFIG.php");
 /**
  * バッチ処理用コンフィグファイル。バッチ起動ファイル内で最初に読み込む。
  * パスは末尾に/（スラッシュ）を付ける
- *　更新：2023/04/06
+ *　更新：2023/04/19
  */
 //定数定義　パス情報
 //=====================================================================================================================
@@ -24,7 +24,7 @@ class ConfigLandClassUpload {
     private static $update_user    = 'BATCH';
 	private static $create_program = 'LandClassUpload';
 	private static $update_program = 'LandClassUpload';
-	
+
     //バッチファイル関連情報
     //=================================================================================================================
 
@@ -38,19 +38,19 @@ class ConfigLandClassUpload {
 
     //CSV名前情報
     //=================================================================================================================
-	private static $preg_csv_name_defined	= 'landclass_';	
-	
+	private static $preg_csv_name_defined	= 'landclass_';
+
     //CSV項目関連情報
     //=================================================================================================================
 	//CSV項目名
-	private static $col_names = array(	
+	private static $col_names = array(
 		0  => '都道府県',
 		1  => '市区町村',
 		2  => '等地',
 		3  => '等地名',
 
 	);
-	
+
 	private static $col_names_DB = array(
 		0  => 'prefectures',
 		1  => 'municipality',
@@ -58,7 +58,7 @@ class ConfigLandClassUpload {
 		3  => 'landclass_name',
 
 	);
-		
+
 	//CSV項目バリデーション
 	//-----------------------------------------------------------------------------------------------------------------
 	private static $col_pregs = array(
@@ -67,14 +67,14 @@ class ConfigLandClassUpload {
 		2  => '/^[0-9]{1,2}$/',
 		3  => '/^[一-龠々ぁ-んァ-ヶー０-９]{1,10}$/u',
 	);
-	
+
 	private static $col_valid_fail_msgs = array(
 		0  => '全角漢字のみ4文字',
 		1  => '全角漢字カナのみ20文字',
 		2  => '半角数のみ2文字',
 		3  => '全角のみ10文字',
 	);
-	
+
 	private static $msg_cantbe_null = '空欄不可';
 
     //メッセージ情報（ログファイル出力）
@@ -88,9 +88,9 @@ class ConfigLandClassUpload {
 	//-----------------------------------------------------------------------------------------------------------------
 	private static $error_msg_include_file_lack				        = '管理クラス格納フォルダを確認してください';
 	private static $error_msg_include_notfound_prefectures_mst	    = '都道府県マスタ管理クラスがありません';
-	private static $error_msg_include_notfound_municipality_mst	    = '市区町村マスタ管理クラスがありません';	
-	private static $error_msg_include_notfound_landclass_data	    = '等地データ管理クラスがありません';		
-	private static $error_msg_include_notfound_landclass_mst	    = '等地マスタ管理クラスがありません';		
+	private static $error_msg_include_notfound_municipality_mst	    = '市区町村マスタ管理クラスがありません';
+	private static $error_msg_include_notfound_landclass_data	    = '等地データ管理クラスがありません';
+	private static $error_msg_include_notfound_landclass_mst	    = '等地マスタ管理クラスがありません';
 	private static $error_msg_batchfile_name						= 'バッチファイル名不一致：再設定してください';
 	private static $error_msg_is_processing							= '同じバッチファイルが実行されています';
 	private static $error_msg_csv_notfound							= 'アップロードファイルが見つかりません。';
@@ -104,7 +104,7 @@ class ConfigLandClassUpload {
 	private static $error_msg_tabledelete_fail						= '既存のテーブルレコード消去に失敗しました';
 	private static $error_msg_tableinsert_fail_exist				= 'キー項目の重複があります。 ※重複したキー ：　';
 	private static $error_msg_tableinsert_fail_same_landclass_name	= '同じ等地名のファイルが存在します';
-	private static $error_msg_tableinsert_fail_display_order        = 'ファイル名に同じ表示順が存在します';
+	private static $error_msg_tableinsert_fail_display_order        = '同じ表示順のファイルが存在します';
 	private static $error_msg_tableinsert_fail_landclass_mst		= '⇒データ登録失敗（ＤＢ処理エラー）：　等地マスタ';
 	private static $error_msg_tableinsert_fail_landclass_data		= '⇒データ登録失敗（ＤＢ処理エラー）：　等地データ';
 	private static $error_msg_tableinsert_fail_prefectures_mst		= '⇒データ登録失敗（ＤＢ処理エラー）：　都道府県マスター';
@@ -120,7 +120,7 @@ class ConfigLandClassUpload {
 	private static $msg_file_found_multi		  = "取り込み対象複数（詳細はログをご確認下さい）";
 	private static $msg_data_error				  = "データ処理失敗（詳細はログをご確認下さい）";
 	private static $msg_fatal_error				  = "異常終了（詳細はログをご確認下さい）";
- 
+
 	//getter
     //=================================================================================================================
 	//DB操作情報
@@ -145,21 +145,21 @@ class ConfigLandClassUpload {
 	//バッチファイル関連情報
 	//-----------------------------------------------------------------------------------------------------------------
 	/**
-     * 
+     *
      * @return  実行（バッチ）ファイル名
      */
 	public static function getNameExec() {
 		return ConfigLandClassUpload::$name_exec;
 	}
 	/**
-     * 
+     *
      * @return  バッチクラスファイル名
      */
     public static function getNameBatchClass() {
         return ConfigLandClassUpload::$name_batch_class;
     }
 	/**
-     * 
+     *
      * @return  エラーログファイル名
      */
     public static function getNameErrorLog() {
@@ -188,11 +188,11 @@ class ConfigLandClassUpload {
 	/**
 	 * CSVファイル名確認
      * @return  $preg_csv_name_defined
-     */	
+     */
 	public static function getPregCsvNameDefined() {
 		return ConfigLandClassUpload::$preg_csv_name_defined;
 	}
-	
+
 	//CSV項目情報
 	//-----------------------------------------------------------------------------------------------------------------
 	/**
@@ -218,7 +218,7 @@ class ConfigLandClassUpload {
 	public static function getColPreg($col_num) {
 		return ConfigLandClassUpload::$col_pregs[$col_num];
 	}
-	
+
 	//メッセージ情報
 	//-----------------------------------------------------------------------------------------------------------------
 	/**
@@ -256,8 +256,8 @@ class ConfigLandClassUpload {
 	public static function getErrorMsgCsvrowFormat() 					{ return ConfigLandClassUpload::$error_msg_csvrow_format;}
 	public static function getErrorMsgDBconnectFail() 					{ return ConfigLandClassUpload::$error_msg_dbconnect_fail;}
 	public static function getErrorMsgTransactionFail() 				{ return ConfigLandClassUpload::$error_msg_transaction_fail;}
-	public static function getErrorMsgTabledeleteFail() 				{ return ConfigLandClassUpload::$error_msg_tabledelete_fail;}	
-	public static function getErrorMsgTableinsertFailExist()			{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_exist;}	
+	public static function getErrorMsgTabledeleteFail() 				{ return ConfigLandClassUpload::$error_msg_tabledelete_fail;}
+	public static function getErrorMsgTableinsertFailExist()			{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_exist;}
 	public static function getErrorMsgTableinsertFailSameLandClassName()		{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_same_landclass_name;}
 	public static function getErrorMsgTableinsertFailDisplayOrder()		{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_display_order;}
 	public static function getErrorMsgTableinsertFailLandClassMst()		{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_landclass_mst;}

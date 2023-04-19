@@ -3,7 +3,7 @@
 //定数定義
 //=====================================================================================================================
 /**
-　* 更新2023/04/06
+　* 更新2023/04/12 ループでファイルごとに取り込みできるが、エラー対応ができていない
  * バッチ処理実行クラス
  */
 class ClassLandClassUpload {
@@ -22,7 +22,7 @@ class ClassLandClassUpload {
 	private $landclass_csv 	    = array();
 	private $landclass_names    = array();
 	private $display_orders     = array();
-	
+
 	//コンソール出力メッセージ用フラグ
 	private $flg_file_notfound		= false;
 	private $flg_operation_fail		= false;
@@ -30,15 +30,15 @@ class ClassLandClassUpload {
 	private $flg_file_found_multi	= false;
 	private $flg_data_error			= false;
 	private $flg_fatal_error		= false;
-	
+
 	function __construct() {
-		
+
 		//includeファイル存在チェック
 		if(!include_once(PATH_PREFECTURES_MST.ConfigLandClassUpload::getNamePrefecturesMst())){
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgIncludeNotfoundPrefecturesMst(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 		}
-		if(!include_once(PATH_MUNICIPALITY_MST.ConfigLandClassUpload::getNameMunicipalityMst())){ 
+		if(!include_once(PATH_MUNICIPALITY_MST.ConfigLandClassUpload::getNameMunicipalityMst())){
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgIncludeNotfoundMunicipalityMst(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 		}
@@ -58,7 +58,7 @@ class ClassLandClassUpload {
 
 	public function execFlow() {
 		$is_error = false;
-		
+
 		$this->addErrorLogMessage(ConfigLandClassUpload::getMsgBatchFileBegin(), CONFIG::$LOG_LEVEL_INFO);
 		$this->setFilepathCSV(PATH_CSV);
 		
@@ -78,66 +78,106 @@ class ClassLandClassUpload {
 			$is_error = true;
 			$this->closeBatch();
 		}
-
-		//アップロードファイル確認
-		$this->checkUploadFile();
-		if(!$this->checkErrorFlg()) {
-			$is_error = true;
-			$this->closeBatch();
-		}
-
-		//CSVデータフォーマットチェック
-		$this->checkDataFormat();
-		if(!$this->checkErrorFlg()) {
-			$is_error = true;
-			$this->closeBatch();
-		}		
 		
-		//DBトランザクション
-		$this->setTransaction();
-		if(!$this->checkErrorFlg()) {
-			$is_error = true;
-			$this->closeBatch();
-		}
-		
-		//エラーなしの場合、完了処理
-		//------------------------------------------------------------------------------------------------------------------
-		//対象ファイル削除
-		$result = false;
-		try {
-			for ($num = 0;$num < count($this->deletefiles);$num++){
-				$result = unlink($this->deletefiles[$num]);
-			}
+		$is_error = false;
 
-		} catch (Exception $e) {}
+		//DB接続
+		$result = $this->setDBConnection(Config::getDsn(), Config::getUser(), Config::getPassword(),array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+
 		if(!$result) {
-			//削除失敗
+			$this->closeBatch();
+			return false;
+		}
+	
+
+		if(!$this->checkErrorFlg()) {
 			$is_error = true;
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgBatchSuccessDeleteFail(), CONFIG::$LOG_LEVEL_INFO);
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgBatchSuccessDeleteFail());
+			$this->closeBatch();
 		}
-		if(!$is_error) {
-			//正常完了
-			$this->addErrorLogMessage(ConfigLandClassUpload::getMsgBatchFileDone(), CONFIG::$LOG_LEVEL_INFO);
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgBatchSuccess());
+
+		//DBモデルをセット
+		$this->setDBModels();
+		$this->getDBH()->beginTransaction();
+
+		$this->files = glob($this->getFilepathCSV().'*');
+		if (1 > count($this->files)) {
+			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvNotfound().$this->getInputFile(), CONFIG::$LOG_LEVEL_WARN);
+			$this->addConsoleMessage(ConfigLandClassUpload::getMsgFileNotfound());
+			//$this->setFlgFileNotFound(true);
+			$this->closeBatch();
+			$is_error = true;
+			return !$is_error;
 		}
+		
+		for($this->num = 0 ; $this->num < count($this->files) ; $this->num++){ 
+			
+			//アップロードファイル確認
+			$this->checkUploadFile();
+			if(!$this->checkErrorFlg()) {
+				$is_error = true;
+				$this->closeBatch();
+			}
+			
+			//CSVデータフォーマットチェック
+			$this->checkDataFormat();
+			if(!$this->checkErrorFlg()) {
+				$is_error = true;
+				$this->closeBatch();
+			}
+			
+			//DBトランザクション開始
+			$this->setTransaction();
+			if(!$this->checkErrorFlg()) {
+				$is_error = true;
+				$this->closeBatch();
+			}
+			
+		}
+		
+			//エラーなしの場合、完了処理
+			//------------------------------------------------------------------------------------------------------------------
+			//対象ファイル削除
+		for($this->num = 0 ; $this->num < count($this->files) ; $this->num++){
+			$result = false;
+			try {
+				$result = unlink($this->deletefiles[$this->num]);
+			} catch (Exception $e) {}
+			if(!$result && $this->num == count($this->files)-1 ) {
+				//削除失敗
+				$is_error = true;
+				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgBatchSuccessDeleteFail(), CONFIG::$LOG_LEVEL_INFO);
+				$this->addConsoleMessage(ConfigLandClassUpload::getMsgBatchSuccessDeleteFail());
+			}
+			if(!$is_error && $this->num == count($this->files)-1 ) {
+				//正常完了
+				$this->addErrorLogMessage(ConfigLandClassUpload::getMsgBatchFileDone(), CONFIG::$LOG_LEVEL_INFO);
+				$this->addConsoleMessage(ConfigLandClassUpload::getMsgBatchSuccess());
+			}	
+		}
+
+		//コミット
+		$this->getDBH()->commit();
+
+		//PDOのコネクション破棄
+		$this->setDBH(null);
+
 		$this->closeBatch();
 	}
-	
+
 	/**
 	 * バッチファイル名確認
 	 *
 	 */
 	public function checkBatchFileName() {
-		$ret = false;		
-		
+		$ret = false;
+
 		//バッチファイル名が指定したものと不一致なら、処理終了
 		if(basename($_SERVER['PHP_SELF']) != ConfigLandClassUpload::getNameExec()) {
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgBatchfileName(), CONFIG::$LOG_LEVEL_WARN);
 			$this->setFlgOperationFail(true);
 			return $ret;
 		}
-		
+
 		$ret= true;
 		return $ret;
 	}
@@ -152,53 +192,49 @@ class ClassLandClassUpload {
 
 		// 1) ファイル情報セット
 		//-------------------------------------------------------------------------------------------------------------
-		$files = glob($this->getFilepathCSV().'*');
-		$this->deletefiles = $files;
-
-		if (1 > count($files)) {
+		$setfiles = $this->files;
+		$this->deletefiles = $setfiles;
+		
+		if (1 > count($this->files)) {
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvNotfound().$this->getInputFile(), CONFIG::$LOG_LEVEL_WARN);
 			$this->setFlgFileNotFound(true);
 			$is_error = true;
 			return !$is_error;
 		}
 
-		for($num = 0 ; $num < count($files) ; $num++){
-			
-			$this->setInputFile($files[$num]);
-			$this->test =  sizeof(file($files[$num]));
-		 
-			// 2) ファイルが取得できるか
-			//-------------------------------------------------------------------------------------------------------------
-			$result = $this->isAvailableInputFile();
-			if(!$result) {
-				$is_error = true;
-				return !$is_error;
-			}	
-			
-			//ファイルオブジェクトセット	
-			$this->setFileObj(new SplFileObject($this->getInputFile(), $open_mode = 'r'));
-		
-			// 3) ファイル名フォーマット確認
-			//-------------------------------------------------------------------------------------------------------------
-			$result = $this->isValid_Name(mb_convert_encoding($this->getFileObj()->getFileName(), "SJIS", "auto"));
-			
-			if(!$result) { 
-				$is_error = true;
-				return !$is_error;
-			}
-		
-			//ファイル内容取得
-			$csv_table = $this->convCSVFileToCSVArray($this->getFileObj());
-			$this->setCSVTable($csv_table);
-			
-			// 4) ファイルが空か？
-			//-------------------------------------------------------------------------------------------------------------
-			$result = $this->isNullCsvFile($this->getCSVTable());
-			if(!$result) { 
-				$is_error = true;
-				return !$is_error;
-			}	
+		$this->setInputFile($setfiles[$this->num]);
+
+		// 2) ファイルが取得できるか
+		//-------------------------------------------------------------------------------------------------------------
+		$result = $this->isAvailableInputFile();
+		if(!$result) {
+			$is_error = true;
+			return !$is_error;
 		}
+
+		//ファイルオブジェクトセット
+		$this->setFileObj(new SplFileObject($this->getInputFile(), $open_mode = 'r'));
+
+		// 3) ファイル名フォーマット確認
+		//-------------------------------------------------------------------------------------------------------------
+		$result = $this->isValid_Name(mb_convert_encoding($this->getFileObj()->getFileName(), "SJIS", "auto"));
+
+		if(!$result) {
+			$is_error = true;
+			return !$is_error;
+		}
+
+		//ファイル内容取得	
+		$csv_table = $this->convCSVFileToCSVArray($this->getFileObj());
+		$this->setCSVTable($csv_table);
+
+		// 4) ファイルが空か？
+		//-------------------------------------------------------------------------------------------------------------
+		$result = $this->isNullCsvFile($this->getCSVTable());
+		if(!$result) {
+			$is_error = true;
+			return !$is_error;
+		}	
 		return !$is_error;
 	}
 
@@ -208,25 +244,25 @@ class ClassLandClassUpload {
 	 */
 	public function checkDataFormat() {
 		$is_error = false;
-		
+
 		//(最終行は改行とする)
 		$csvTable = $this->getCSVTable();
-		for($i = 0; $i < sizeof($csvTable); $i++){	
+		for($i = 0; $i < sizeof($csvTable); $i++){
 			$row_valid_fail = false;
-			$csv_row = $csvTable[$i]; 
-			
+			$csv_row = $csvTable[$i];
+
 			for($j = 0; $j < sizeof($csv_row); $j++) {
 				$result = $this->isValidColData($csv_row[$j], $j);
 				if(!$result) {
 					$row_valid_fail = true;
 				}
-			}		
+			}
 			if($row_valid_fail) {
 				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvrowFormat().($i+1), CONFIG::$LOG_LEVEL_ERROR);
 				$this->setFlgDataError(true);
 				$is_error = true;
-			}	
-		}	
+			}
+		}
 		return !$is_error;
 	}
 
@@ -236,19 +272,11 @@ class ClassLandClassUpload {
 	 */
 	public function setTransaction() {
 		$is_error = false;
-		
-		//DB接続
-		$result = $this->setDBConnection(Config::getDsn(), Config::getUser(), Config::getPassword(),array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
-		if(!$result) return false;
-		
-		//DBモデルをセット
-		$this->setDBModels();
-		
+
 		try {
-			$this->getDBH()->beginTransaction();
 			$result = $this->execDBProcess();
 			if($result) {
-				$this->getDBH()->commit();
+				
 			} else {
 				$this->getDBH()->rollBack();
 				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTransactionFail(), CONFIG::$LOG_LEVEL_FATAL);
@@ -256,13 +284,10 @@ class ClassLandClassUpload {
 				$is_error = true;
 			}
 		} catch (Exception $e) { $this->getDBH()->rollBack(); $this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTransactionFail(), CONFIG::$LOG_LEVEL_FATAL); $is_error = true;}
-		
-		//PDOのコネクション破棄
-		$this->setDBH(null);
-		
+
 		return !$is_error;
 	}
-	
+
 	//プロセス重複確認
 	//==================================================================================================================
 	/**
@@ -271,7 +296,7 @@ class ClassLandClassUpload {
 	 */
 	public function isProcessing($filename) {
 		$is_processing = false;
-	
+
 		//自身と同一のファイル名をプロセスリストから検索する。
 		$command = "ps -ef | grep '$filename' | grep -v 'grep'";
 		$output = array();
@@ -304,7 +329,7 @@ class ClassLandClassUpload {
 	 */
 	public function isAvailableInputFile() {
 		$is_error = false;
-		
+
 		//ファイル取得
 		try {
 			$file_obj = new SplFileObject($this->getInputFile(), $open_mode = 'r');
@@ -316,31 +341,31 @@ class ClassLandClassUpload {
 		}
 		return !$is_error;
 	}
-	 
+
 	/**
 	 * ファイル名検査
 	 * @return boolean エラーなし:true
 	 */
 	public function isValid_Name( $filename ) {
 		$is_error = false;
-		
+
 		//ファイル名のバリデーション
 		//-----------------------------------------------------------------------------------------
 		//csvか
 		if(substr($filename, -4) != '.csv' ) {
 			$is_error = true;
 		}
-		
+
 		//アンダーバーが2つあるか
 		$count = substr_count($filename, "_");
 		if($count != 2){
 			$is_error = true;
 		}
-		
-		//CSVファイルから等地名を取得 
+
+		//CSVファイルから等地名を取得
 		$landclass_csv = explode('_',$filename);
 		$landclass_csvname = $landclass_csv[1];
-		$display_order = substr($landclass_csv[2],0,1);
+		$display_order = strstr($landclass_csv[2],'.',true);
 		$this->landclass_csvname = mb_convert_encoding($landclass_csvname, "UTF-8","shift-jis");
 
 		//表示順をチェック
@@ -348,15 +373,15 @@ class ClassLandClassUpload {
 			$is_error = true;
 		}
 
-		$this->landclass_names[] = $this->landclass_csvname;	
-		$this->display_orders[] = $display_order;	
+		$this->landclass_names[] = $this->landclass_csvname;
+		$this->display_orders[] = $display_order;
 
 		if($is_error) {
 			//エラーメッセージ記録
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvNameNotcorrect(), CONFIG::$LOG_LEVEL_ERROR);
 			$this->setFlgCsvNameError(true);
 		}
-		
+
 		return !$is_error;
 	}
 
@@ -364,15 +389,15 @@ class ClassLandClassUpload {
 	 * CSVファイル空チェック
 	 * @return boolean エラーなし:true
 	 */
-	public function isNullCsvFile($csv_filetable_array) {	
+	public function isNullCsvFile($csv_filetable_array) {
 		$is_error = false;
-		
+
 		//ファイルが空か？
 		if(!isset($csv_filetable_array[1][0])) {
 			$is_error = true;
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvIsempty(), CONFIG::$LOG_LEVEL_ERROR);
 			$this->setFlgDataError(true);
-		}	
+		}
 		return !$is_error;
 	}
 
@@ -412,7 +437,7 @@ class ClassLandClassUpload {
 		setlocale(LC_ALL, 'ja_JP.UTF-8');
 
 		$csv_table = array();
-		
+
 		while( $csv_row = $file_obj->fgetcsv()) {
 			if (count($csv_row) < 2){
 				break;
@@ -441,16 +466,16 @@ class ClassLandClassUpload {
 
 		$namelist_prefectures = array();
 		$namelist_prefectures_municipality = array();
-		
+
 		//csvデータ行ループ　最終行は改行とする。
 		$csvTable = $this->getCSVTable();
 		for($i = 0 ; $i < sizeof($csvTable); $i++) {
 			$csv_row 	= $csvTable[$i];
-	
+
 			$prefectures_name   = trim($csv_row[0]);
 			$municipality_name  = trim($csv_row[1]);
 			$landclass_name		    = trim($csv_row[3]);
-	
+
 			//都道府県確認
 			//---------------------------------------------------------------------------------
 			//既出の都道府県か？
@@ -460,7 +485,7 @@ class ClassLandClassUpload {
 			}
 
 			//都道府県・市区町村確認
-			//---------------------------------------------------------------------------------				
+			//---------------------------------------------------------------------------------
 			$flg_exist = false;
 			foreach ($namelist_prefectures_municipality as $nmc_row) {
 				//既出の都道府県・市区町村の組み合わせか？
@@ -476,16 +501,12 @@ class ClassLandClassUpload {
 				$work_array['municipality']   = $municipality_name;
 				$namelist_prefectures_municipality[]     = $work_array;
 			}
-			//等地データ重複確認
-			//---------------------------------------------------------------------------------
-			$is_existing = $this->isExistingKeyLandClassData($landclass_name, $prefectures_name, $municipality_name);
-			if($is_existing) { $is_error = true;}
-			
+
 			//等地名に重複がないか
 			$landclass_count = array_count_values($this->landclass_names);
 			$max = max($landclass_count);
 			if ($max != 1){
-				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailSameLandClassName(), CONFIG::$LOG_LEVEL_FATAL);				
+				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailSameLandClassName(), CONFIG::$LOG_LEVEL_FATAL);
 				$this->setFlgFileFoundMulti(true);
 				return false;
 			}
@@ -494,10 +515,15 @@ class ClassLandClassUpload {
 			$order_count = array_count_values($this->display_orders);
 			$max = max($order_count);
 			if ($max != 1){
-				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailDisplayOrder(), CONFIG::$LOG_LEVEL_FATAL);				
+				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailDisplayOrder(), CONFIG::$LOG_LEVEL_FATAL);
 				$this->setFlgFileFoundMulti(true);
 				return false;
 			}
+
+			//等地データ重複確認
+			//---------------------------------------------------------------------------------
+			$is_existing = $this->isExistingKeyLandClassData($landclass_name, $prefectures_name, $municipality_name);
+			if($is_existing) { $is_error = true;}
 
 			//等地データをDB登録
 			//---------------------------------------------------------------------------------	
@@ -509,12 +535,12 @@ class ClassLandClassUpload {
 		//等地名マスタをDB登録
 		//-------------------------------------------------------------------------------------
 		for ($num = 0 ; $num < count($this->display_orders) ; $num++){
-			
+
 			$result = $this->insertLandClassMst($num);
 
 			if(!$result) {
-				$this->addErrorLogMessage($prefectures_name, CONFIG::$LOG_LEVEL_FATAL);					
-				$this->setFlgFatalError(true);				
+				$this->addErrorLogMessage($prefectures_name, CONFIG::$LOG_LEVEL_FATAL);
+				$this->setFlgFatalError(true);
 				$is_error = true;
 			}
 		}
@@ -524,8 +550,8 @@ class ClassLandClassUpload {
 		foreach($namelist_prefectures as $prefectures_name) {
 			$result = $this->insertPrefecturesMst($prefectures_name);
 			if(!$result) {
-				$this->addErrorLogMessage($prefectures_name, CONFIG::$LOG_LEVEL_FATAL);					
-				$this->setFlgFatalError(true);				
+				$this->addErrorLogMessage($prefectures_name, CONFIG::$LOG_LEVEL_FATAL);
+				$this->setFlgFatalError(true);
 				$is_error = true;
 			}
 		}
@@ -540,7 +566,7 @@ class ClassLandClassUpload {
 				$is_error = true;
 			}
 		}
-		
+
 		if($is_error) {
 			return false;
 		}
@@ -555,27 +581,28 @@ class ClassLandClassUpload {
 	 */
 	public function setDBConnection($dsn,$user,$pass,$array = null) {
 		$ret = false;
-		
+
 		try {
-			$pdo = new PDO($dsn, $user, $pass,$array);		
+			$pdo = new PDO($dsn, $user, $pass,$array);
 		} catch (PDOException $e) {
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgDBconnectFail(), CONFIG::$LOG_LEVEL_FATAL);
-			$this->setFlgFatalError(true);			
+			$this->addConsoleMessage(ConfigLandClassUpload::getMsgFatalError());
+			$this->setFlgFatalError(true);
 			return $ret;
 		}
 		$this->setDBH($pdo);
-		
+
 		$ret = true;
 		return $ret;
 	}
-	
+
 	/**
 	 * DBモデル情報　セッター(全て)
 	 * @return boolean 完了：true;
 	 */
 	public function setDBModels() {
 		$ret = false;
-		
+
 		$this->setPrefecturesMst(new PrefecturesMst());
 			$this->getPrefecturesMst()->setColumnValue('cre_usr',ConfigLandClassUpload::getCreateUser());
 			$this->getPrefecturesMst()->setColumnValue('cre_prg',ConfigLandClassUpload::getCreateProgram());
@@ -599,35 +626,40 @@ class ClassLandClassUpload {
 		$ret = true;
 		return $ret;
 	}
-	
+
 	/**
 	 * DB内レコード削除(4 TABLE分まとめて実行)
 	 * @return boolean 処理結果 完了:true
 	 */
 	public function deleteDBRecords() {
 		$is_error = false;
-		
+
 		//モデルが正しくセットされているか？
+		
 		if(!($this->getPrefecturesMst() != null || $this->getPrefecturesMst() instanceof LandClass)) $is_error = true;
 		if(!($this->getMunicipalityMst()   != null || $this->getMunicipalityMst()   instanceof LandClass)) $is_error = true;
+		if($this->num == 0){ 
 		if(!($this->getLandClassData()!= null || $this->getLandClassData()instanceof LandClass)) $is_error = true;
+		}
 		if(!($this->getLandClassMst()!= null || $this->getLandClassMst()instanceof LandClass)) $is_error = true;
-
+		
 		if($is_error) {
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTabledeleteFail(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 			return !$is_error;
 		}
 		
-		$ret = $this->getPrefecturesMst()->deleteAllRecords($this->getDBH());	
+		$ret = $this->getPrefecturesMst()->deleteAllRecords($this->getDBH());
 		if(!$ret) $is_error = true;
 		$ret = $this->getMunicipalityMst()->deleteAllRecords($this->getDBH());
 		if(!$ret) $is_error = true;
+		if($this->num == 0){ 
 		$ret = $this->getLandClassData()->deleteAllRecords($this->getDBH());
 		if(!$ret) $is_error = true;
+		} 
 		$ret = $this->getLandClassMst()->deleteAllRecords($this->getDBH());
 		if(!$ret) $is_error = true;
-
+		
 		if($is_error) {
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTabledeleteFail(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
@@ -641,16 +673,16 @@ class ClassLandClassUpload {
 	 * @return boolean 処理結果 完了:true
 	 */
 	public function insertLandClassData($add_record) {
-		$ret = false;	
+		$ret = false;
 		$landclass_data = $this->getLandClassData();
 		for($i = 0; $i<sizeof($add_record); $i++) {
 			$landclass_data->setColumnValue(ConfigLandClassUpload::getColNameDB($i),$add_record[$i]);
 		}
-	
+
 		$result = $landclass_data->insertRecord($this->getDBH());
-		
+
 		if(!$result) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailLandClassData(), CONFIG::$LOG_LEVEL_FATAL);				
+			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailLandClassData(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 			return $ret;
 		}
@@ -663,15 +695,14 @@ class ClassLandClassUpload {
 	 * @return boolean 処理結果 完了:true
 	 */
 	public function insertLandClassMst($num) {
-		$ret = false;	
-
+		$ret = false;
 		$this->getLandClassMst()->setColumnValue('landclass_name',$this->landclass_names[$num]);
 		$this->getLandClassMst()->setColumnValue('display_order',$this->display_orders[$num]);
-		
+
 		$result = $this->getLandClassMst()->insertRecord($this->getDBH());
-		
+
 		if(!$result) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailLandClassMst(), CONFIG::$LOG_LEVEL_FATAL);				
+			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailLandClassMst(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 			return $ret;
 		}
@@ -685,13 +716,13 @@ class ClassLandClassUpload {
 	 */
 	public function isExistingKeyLandClassData($landclass_name, $prefectures_name, $municipality_name) {
 		$ret = false;
-		
+
 		$landclass_data = $this->getLandClassData();
 		$landclass_data->setColumnValue(ConfigLandClassUpload::getColNameDB(0),$prefectures_name);
 		$landclass_data->setColumnValue(ConfigLandClassUpload::getColNameDB(1),$municipality_name);
 		$landclass_data->setColumnValue(ConfigLandClassUpload::getColNameDB(3),$landclass_name);
 
-		
+
 		$is_exist = $landclass_data->isExist($this->getDBH());
 		if($is_exist) {
 			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailExist().$prefectures_name.', '.$municipality_name.', '.$landclass_name, CONFIG::$LOG_LEVEL_ERROR);
@@ -719,7 +750,7 @@ class ClassLandClassUpload {
 			$this->setFlgFatalError(true);
 			return $ret;
 		}
-		
+
 		$ret = true;
 		return $ret;
 	}
@@ -740,13 +771,13 @@ class ClassLandClassUpload {
 			$this->setFlgFatalError(true);
 			return $ret;
 		}
-		
+
 		$ret = true;
 		return $ret;
 	}
-	
+
 	//メッセージ処理系
-	//==================================================================================================================	
+	//==================================================================================================================
 	/**
 	 * エラーログ記録　レベル：ERROR
 	 * @param  string
@@ -754,10 +785,10 @@ class ClassLandClassUpload {
 	 */
 	public function addErrorLogMessage($message,$level ) {
 		$ret = false;
-		
+
 		$this->error_log_msgs[] = array( 'message' => "$message", 'level' => $level);
 		$ret = true;
-		
+
 		return $ret;
 	}
 
@@ -776,7 +807,7 @@ class ClassLandClassUpload {
 				error_log($log, 3, PATH_ERROR_LOG.ConfigLandClassUpload::getNameErrorLog());
 			} catch (Exception $e) {}
 		}
-		
+
 		$ret = true;
 		return $ret;
 	}
@@ -788,10 +819,10 @@ class ClassLandClassUpload {
 	 */
 	public function addConsoleMessage($message) {
 		$ret = false;
-		
+
 		$this->console_msg[] = "$message \n";
 		$ret = true;
-		
+
 		return $ret;
 	}
 
@@ -807,18 +838,18 @@ class ClassLandClassUpload {
 			echo $msg;
 		}
 		$ret = true;
-		
+
 		return $ret;
 	}
 	//エラーフラグ確認
-	//==================================================================================================================	
+	//==================================================================================================================
 	/**
 	 * エラーフラグ確認
-	 * @return boolean 
+	 * @return boolean
 	 */
 	public function checkErrorFlg() {
 		$is_error = false;
-		
+
 		if($this->getFlgFileNotFound()){
 			$this->addConsoleMessage(ConfigLandClassUpload::getMsgFileNotfound());
 			$is_error = true;
@@ -833,7 +864,7 @@ class ClassLandClassUpload {
 			$this->addConsoleMessage(ConfigLandClassUpload::getMsgCsvNameError());
 			$is_error = true;
 			return !$is_error;
-		}		
+		}
 		if($this->getFlgFileFoundMulti()){
 			$this->addConsoleMessage(ConfigLandClassUpload::getMsgFileFoundMulti());
 			$is_error = true;
@@ -866,14 +897,14 @@ class ClassLandClassUpload {
 	//==================================================================================================================
 	/**
 	 * バッチ終了処理（エラーログ、コンソールメッセージの出力）
-	 * @return boolean 
+	 * @return boolean
 	 */
 	public function closeBatch() {
 		$this->outputErrorLog();
 		$this->outputConsole();
 		die;
 	}
-	
+
 	//setter,getter
 	//==================================================================================================================
 	//フラグコントロール
@@ -955,8 +986,8 @@ class ClassLandClassUpload {
 		return $this->file_obj;
 	}
 	public function setCSVTable($csv_tabledata) {
-		//$this->csv_table = $csv_tabledata;
-		$this->csv_table = array_merge($this->csv_table,$csv_tabledata);
+		$this->csv_table = $csv_tabledata;
+		//$this->csv_table = array_merge($this->csv_table,$csv_tabledata);
 		return true;
 	}
 	public function getCSVTable() {
@@ -979,11 +1010,12 @@ class ClassLandClassUpload {
 		$this->prefectures_mst = $landclass_name;
 		return true;
 	}
-	
+
 	public function getPrefecturesMst() {
 		return $this->prefectures_mst;
+		
 	}
-	
+
 	public function setMunicipalityMst($landclass_name) {
 		$this->municipality_mst = $landclass_name;
 		return true;
@@ -1006,10 +1038,10 @@ class ClassLandClassUpload {
 		$this->landclass_data = $landclass_name;
 		return true;
 	}
-	
+
 	public function getLandClassData() {
 		return $this->landclass_data;
 	}
-	
+
 }
 ?>
