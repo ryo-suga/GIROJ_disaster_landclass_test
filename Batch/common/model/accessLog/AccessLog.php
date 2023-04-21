@@ -2,12 +2,12 @@
 
 /**
  * アクセスログ管理クラス
- * 更新 2023/04/06
+ * 更新 2023/04/21
  *
  */
 include_once('/var/www/landclass_batch/common/model/Model.php');
 
-class AccessLog extends Model{	
+class AccessLog extends Model{
 	// 検索条件
 	private $searchConditionNameArray = array(
 		'MONTHLY' => 0,
@@ -36,7 +36,7 @@ class AccessLog extends Model{
 		$this->setColumnName('municipality');
 		$this->setColumnName('src_ip');
 		$this->setColumnName('user_agent');
-		
+
 	}
 
 	// 検索条件セット

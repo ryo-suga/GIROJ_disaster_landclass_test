@@ -1,8 +1,8 @@
 <?php
 
 /**
- * 市区町村マスタ管理クラス
- *
+ * 等地マスタ管理クラス
+ * 更新 2023/04/21
  *
  */
 include_once('/var/www/landclass_batch/common/model/Model.php');

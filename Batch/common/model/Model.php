@@ -2,6 +2,7 @@
 
 /**
  * マスタ管理クラス(親）
+ * 更新 2023/04/21
  */
 
 abstract class Model {
@@ -13,7 +14,7 @@ abstract class Model {
 	private $search_value = null;
 	// ソート条件
 	private $sort_str = null;
-    
+
 	public function __construct() {
 		$now = new DateTime();
 		$this->setColumnName('create_date');
@@ -26,7 +27,7 @@ abstract class Model {
 		$this->setColumnValue('update_date', $now->format('ymdHis'));
 
 	}
-	
+
     //setter
     //==================================================================================================================
 	//検索条件の値セット
@@ -60,7 +61,7 @@ abstract class Model {
 	//列の値セット
 	public function setColumnValue($column_name, $column_value) {
 		$ret = false;
-		
+
 		for($i = 0; $i < sizeof($this->column_set); $i++) {
 			$name = $this->column_set[$i]['column_name'];
 			if($name == $column_name) {
@@ -82,7 +83,7 @@ abstract class Model {
 	}
 	public function getColumnValue($column_name) {
 		$column_value = '';
-		
+
 		for($i = 0; $i < sizeof($this->column_set); $i++) {
 			$name = $this->column_set[$i]['column_name'];
 			if($name == $column_name) {
@@ -96,14 +97,14 @@ abstract class Model {
     //==================================================================================================================
 	/**
      * SELECT 条件に該当するレコードを参照
-     * @param  
+     * @param
      * @return 結果データ
      */
     public function select($dbh = null) {
 		if(!isset($dbh)) {
 			throw new Exception("db handler is null");
 		}
-		
+
 		$column_set = $this->getColumnSet();
 		//列名をStringに列挙
 		$prepare_str_columns = '';
@@ -119,7 +120,7 @@ abstract class Model {
   		try {
 			//クエリ作成
 			$queryStr = 'SELECT '.$prepare_str_columns.' FROM '.$this->getTableName();
-			
+
 			// WHERE句結合
 			if (null != $this->search_str) {
 				$queryStr = $queryStr . " WHERE " . $this->search_str;
@@ -146,7 +147,7 @@ abstract class Model {
 
     /**
      * INSERT foreachで セッターで登録済みの全カラムをINSERT
-     * @param  
+     * @param
      * @return boolean 完了：true
      */
     public function insertRecord($dbh = null) {
@@ -155,7 +156,7 @@ abstract class Model {
 			$is_error = true;
 			return !$is_error;
 		}
-		
+
 		$column_set = $this->getColumnSet();
 		//列名をStringに列挙
 		$prepare_str_columns = '';
@@ -168,7 +169,7 @@ abstract class Model {
 			$prepare_str_columns .= $column['column_name'];
 			$prepare_str_placeholders .= ':'.$column['column_name'];
 		}
-		
+
   		try {
 			//クエリ作成
 			$query = $dbh->prepare('INSERT INTO '.$this->getTableName().'('.$prepare_str_columns.') VALUES('.$prepare_str_placeholders.')');
@@ -176,7 +177,7 @@ abstract class Model {
 				$query->bindParam(':'.$column['column_name'], $column['column_value'], PDO::PARAM_STR);
 			}
 			$ret = $query->execute();
-			
+
 		} catch (PDOException $e ) {
 			$is_error = true;
 			return !$is_error;
@@ -188,14 +189,14 @@ abstract class Model {
 
 		return !$is_error;
 	}
-	
+
     /**
      * テーブル内全消去
      * @return boolean 完了：true
      */
     public function deleteAllRecords($dbh = null) {
 		$is_error = false;
-	
+
 		if(!isset($dbh)) {
 			$is_error = true;
 			return !$is_error;

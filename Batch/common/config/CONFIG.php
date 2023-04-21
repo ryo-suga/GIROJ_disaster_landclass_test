@@ -3,7 +3,7 @@ ob_start(function($buf){ return mb_convert_encoding($buf, 'sjis', 'utf8'); });
 /**
  * バッチ処理　コンフィグ　親
  * パスは末尾に/（スラッシュ）をつける。
- *　更新：2023/04/19
+ *　更新：2023/04/21
  */
 
 class CONFIG {
@@ -11,7 +11,7 @@ class CONFIG {
 	//パス情報
     //==================================================================================================================
     public static $path_root 	 = '/var/www/landclass_batch/';
-    public static $path_db_landclass = 'common/landclass/';
+    public static $path_db_model = 'common/model/';
 
     //DBアクセス情報
     //==================================================================================================================

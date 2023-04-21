@@ -4,17 +4,17 @@ require_once("/var/www/landclass_batch/common/config/CONFIG.php");
 /**
  * バッチ処理用コンフィグファイル。バッチ起動ファイル内で最初に読み込む。
  * パスは末尾に/（スラッシュ）を付ける
- *　更新：2023/04/19
+ *　更新：2023/04/21
  */
 //定数定義　パス情報
 //=====================================================================================================================
 
 define('PATH_ERROR_LOG', CONFIG::$path_root.'output/landclassupload/');
 define('PATH_CSV',		 CONFIG::$path_root.'input/landclassupload/');
-define('PATH_PREFECTURES_MST', CONFIG::$path_root.CONFIG::$path_db_landclass.'prefecturesmst/');
-define('PATH_MUNICIPALITY_MST',	CONFIG::$path_root. CONFIG::$path_db_landclass.'municipalitymst/');
-define('PATH_LANDCLASS_DATA',CONFIG::$path_root.CONFIG::$path_db_landclass.'landclassdata/');
-define('PATH_LANDCLASS_MST',CONFIG::$path_root.CONFIG::$path_db_landclass.'landclassmst/');
+define('PATH_PREFECTURES_MST', CONFIG::$path_root.CONFIG::$path_db_model.'prefecturesmst/');
+define('PATH_MUNICIPALITY_MST',	CONFIG::$path_root. CONFIG::$path_db_model.'municipalitymst/');
+define('PATH_LANDCLASS_DATA',CONFIG::$path_root.CONFIG::$path_db_model.'landclassdata/');
+define('PATH_LANDCLASS_MST',CONFIG::$path_root.CONFIG::$path_db_model.'landclassmst/');
 
 class ConfigLandClassUpload {
 

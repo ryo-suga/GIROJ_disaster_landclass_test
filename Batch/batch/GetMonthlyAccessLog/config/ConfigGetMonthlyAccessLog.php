@@ -1,11 +1,11 @@
 <?php
 require_once("/var/www/landclass_batch/common/config/CONFIG.php");
-
+//更新 2023/04/21 
 //定数定義　パス情報
 //=====================================================================================================================
 define('PATH_ERROR_LOG', Config::$path_root.'output/GetMonthlyAccessLog/');
 define('PATH_OUTPUT_CSV', Config::$path_root.'output/GetMonthlyAccessLog/csv/');
-define('PATH_ACCESS_LOG', Config::$path_root . Config::$path_db_landclass.'accessLog/');
+define('PATH_ACCESS_LOG', Config::$path_root . Config::$path_db_model.'accessLog/');
 
 class ConfigGetMonthlyAccessLog {
 	

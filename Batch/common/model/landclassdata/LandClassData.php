@@ -1,8 +1,8 @@
 <?php
 
 /**
- * 等値データ管理クラス
- * 更新 2023/04/06
+ * 等地データ管理クラス
+ * 更新 2023/04/21
  */
 include_once('/var/www/landclass_batch/common/model/Model.php');
 
@@ -26,13 +26,13 @@ class LandClassData extends Model {
 		if(!isset($dbh) || $dbh == null) {
 			$ret = -1;
 			return $ret;
-		}	
+		}
 		try {
 			$sql = "SELECT count(*) FROM ".$this->getTableName()
 					." WHERE landclass_name = \"".$this->getColumnValue('landclass_name')
 					."\" AND prefectures = \"".$this->getColumnValue('prefectures')
 					."\" AND municipality = \"".$this->getColumnValue('municipality')."\"";
-			$stmt = $dbh->query($sql);	
+			$stmt = $dbh->query($sql);
 			$row_count = $stmt->fetchColumn();
 
 			if($row_count > 0) {
