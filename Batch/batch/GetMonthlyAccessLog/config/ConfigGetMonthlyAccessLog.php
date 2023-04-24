@@ -1,5 +1,5 @@
 <?php
-require_once("/var/www/landclass_batch/common/config/CONFIG.php");
+require_once(__DIR__ . "/../../../common/config/CONFIG.php");
 //更新 2023/04/21 
 //定数定義　パス情報
 //=====================================================================================================================

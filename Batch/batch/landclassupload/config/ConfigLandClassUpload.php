@@ -1,5 +1,5 @@
 <?php
-require_once("/var/www/landclass_batch/common/config/CONFIG.php");
+require_once(__DIR__ . "/../../../common/config/CONFIG.php");
 
 /**
  * バッチ処理用コンフィグファイル。バッチ起動ファイル内で最初に読み込む。

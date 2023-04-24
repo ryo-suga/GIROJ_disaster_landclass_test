@@ -4,7 +4,7 @@
  * 等地データ管理クラス
  * 更新 2023/04/21
  */
-include_once('/var/www/landclass_batch/common/model/Model.php');
+ include_once(__DIR__. '/../Model.php');
 
 class LandClassData extends Model {
 	public function __construct(){

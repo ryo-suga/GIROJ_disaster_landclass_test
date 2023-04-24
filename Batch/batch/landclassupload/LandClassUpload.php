@@ -7,8 +7,8 @@
 //=====================================================================================================================
 //パス情報
 //---------------------------------------------------------------------------------------------------------------------
-define('PATH_CONFIG_MODELUPLOAD','/var/www/landclass_batch/batch/landclassupload/config/');
-define('PATH_BATCH_CLASS','/var/www/landclass_batch/batch/landclassupload/class/');
+define('PATH_CONFIG_MODELUPLOAD',__DIR__ . '/config/');
+define('PATH_BATCH_CLASS',__DIR__ . '/class/');
 
 //ファイル情報
 //---------------------------------------------------------------------------------------------------------------------

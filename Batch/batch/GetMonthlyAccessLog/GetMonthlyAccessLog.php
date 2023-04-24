@@ -5,7 +5,7 @@
  */
 ini_set('memory_limit', '512M');
 
-require_once('/var/www/landclass_batch/batch/GetMonthlyAccessLog/config/ConfigGetMonthlyAccessLog.php');
+require_once(__DIR__ . '/config/ConfigGetMonthlyAccessLog.php');
 
 // メインフロー実行
 $class_batch = new GetMonthlyAccessLog();
