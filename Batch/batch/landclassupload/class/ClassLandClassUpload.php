@@ -369,12 +369,12 @@ class ClassLandClassUpload {
 		$this->landclass_csvname = mb_convert_encoding($landclass_csvname, "UTF-8","shift-jis");
 
 		//等地名のチェック
-		if(!preg_match('/^[一-龠々ぁ-んァ-ヶー０-９]{1,10}$/u',$this->landclass_csvname)) {
+		if(!preg_match(ConfigLandClassUpload::getPregCsvLandClassname(),$this->landclass_csvname)) {
 			$is_error = true;
 		}
 
 		//表示順をチェック
-		if(!preg_match('/^[1-9]{1,1}$/',$display_order)) {
+		if(!preg_match(ConfigLandClassUpload::getPregCsvDisplayOrder(),$display_order)) {
 			$is_error = true;
 		}
 

@@ -4,7 +4,7 @@ require_once(__DIR__ . "/../../../common/config/CONFIG.php");
 /**
  * バッチ処理用コンフィグファイル。バッチ起動ファイル内で最初に読み込む。
  * パスは末尾に/（スラッシュ）を付ける
- *　更新：2023/04/21
+ *　更新：2023/04/25
  */
 //定数定義　パス情報
 //=====================================================================================================================
@@ -38,7 +38,8 @@ class ConfigLandClassUpload {
 
     //CSV名前情報
     //=================================================================================================================
-	private static $preg_csv_name_defined	= 'landclass_';
+	private static $preg_csv_landclass_name	= '/^[一-龠々ぁ-んァ-ヶー０-９]{1,10}$/u';
+	private static $preg_csv_display_order	= '/^[1-9]{1,1}$/';
 
     //CSV項目関連情報
     //=================================================================================================================
@@ -189,8 +190,11 @@ class ConfigLandClassUpload {
 	 * CSVファイル名確認
      * @return  $preg_csv_name_defined
      */
-	public static function getPregCsvNameDefined() {
-		return ConfigLandClassUpload::$preg_csv_name_defined;
+	public static function getPregCsvLandClassname() {
+		return ConfigLandClassUpload::$preg_csv_landclass_name;
+	}
+	public static function getPregCsvDisplayOrder() {
+		return ConfigLandClassUpload::$preg_csv_display_order;
 	}
 
 	//CSV項目情報
