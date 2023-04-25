@@ -2,7 +2,7 @@
 
 /**
  * 等地データ管理クラス
- * 更新 2023/04/21
+ * 更新 2023/04/25
  */
 include_once('/var/www/landclass_batch/common/model/Model.php');
 
@@ -21,7 +21,7 @@ class LandClassData extends Model {
 	 *　@param 等値名、都道府県、市区町村
 	 *　@return boolean レコード有無
 	 */
-	public function isExist($dbh =　null) {
+	public function isExist($dbh = null) {
 		$ret = false;
 		if(!isset($dbh) || $dbh == null) {
 			$ret = -1;

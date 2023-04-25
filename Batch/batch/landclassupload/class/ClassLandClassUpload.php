@@ -3,7 +3,7 @@
 //定数定義
 //=====================================================================================================================
 /**
-　* 更新2023/04/21
+　* 更新2023/04/25
  * バッチ処理実行クラス
  */
 class ClassLandClassUpload {
@@ -367,6 +367,11 @@ class ClassLandClassUpload {
 		$landclass_csvname = $landclass_csv[1];
 		$display_order = strstr($landclass_csv[2],'.',true);
 		$this->landclass_csvname = mb_convert_encoding($landclass_csvname, "UTF-8","shift-jis");
+
+		//等地名のチェック
+		if(!preg_match('/^[一-龠々ぁ-んァ-ヶー０-９]{1,10}$/u',$this->landclass_csvname)) {
+			$is_error = true;
+		}
 
 		//表示順をチェック
 		if(!preg_match('/^[1-9]{1,1}$/',$display_order)) {
