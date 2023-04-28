@@ -17,14 +17,14 @@ define('FILENAME_CONFIG_MODELUPLOAD','ConfigDisasterLandclassUpload.php');
 //include
 //=====================================================================================================================
 require_once(PATH_CONFIG_MODELUPLOAD.FILENAME_CONFIG_MODELUPLOAD);
-require_once(PATH_BATCH_CLASS.ConfigLandClassUpload::getNameBatchClass());
+require_once(PATH_BATCH_CLASS.ConfigDisasterLandclassUpload::getNameBatchClass());
 
 //バッチ実行処理
 //=====================================================================================================================
 //以降はPHPエラーを非表示。
 error_reporting(0);
 
-$class_batch = new ClassLandClassUpload();
+$class_batch = new ClassDisasterLandclassUpload();
 $class_batch->execFlow();
 
 ?>

@@ -16,7 +16,7 @@ define('PATH_MUNICIPALITY_MST',	CONFIG::$path_root. CONFIG::$path_db_model.'muni
 define('PATH_LANDCLASS_DATA',CONFIG::$path_root.CONFIG::$path_db_model.'landclassdata/');
 define('PATH_LANDCLASS_MST',CONFIG::$path_root.CONFIG::$path_db_model.'landclassmst/');
 
-class ConfigLandClassUpload {
+class ConfigDisasterLandclassUpload {
 
     //DB操作情報
     //=================================================================================================================
@@ -28,8 +28,8 @@ class ConfigLandClassUpload {
     //バッチファイル関連情報
     //=================================================================================================================
 
-	private static $name_exec	 	        = 'DisasterLandclassUploadUpload.php';
-	private static $name_batch_class        = 'DisasterLandclassUpload.php';
+	private static $name_exec	 	        = 'DisasterLandclassUpload.php';
+	private static $name_batch_class        = 'ClassDisasterLandclassUpload.php';
 	private static $name_error_log	        = 'error.log';
 	private static $name_prefectures_mst   	= 'PrefecturesMst.php';
 	private static $name_municipality_mst 	= 'MunicipalityMst.php';
@@ -131,16 +131,16 @@ class ConfigLandClassUpload {
      * @return  DB操作情報
      */
 	public static function getCreateUser(){
-		return ConfigLandClassUpload::$create_user;
+		return ConfigDisasterLandclassUpload::$create_user;
 	}
 	public static function getUpdateUser(){
-		return ConfigLandClassUpload::$update_user;
+		return ConfigDisasterLandclassUpload::$update_user;
 	}
 	public static function getCreateProgram(){
-		return ConfigLandClassUpload::$create_program;
+		return ConfigDisasterLandclassUpload::$create_program;
 	}
 	public static function getUpdateProgram(){
-		return ConfigLandClassUpload::$update_program;
+		return ConfigDisasterLandclassUpload::$update_program;
 	}
 
 	//バッチファイル関連情報
@@ -150,21 +150,21 @@ class ConfigLandClassUpload {
      * @return  実行（バッチ）ファイル名
      */
 	public static function getNameExec() {
-		return ConfigLandClassUpload::$name_exec;
+		return ConfigDisasterLandclassUpload::$name_exec;
 	}
 	/**
      *
      * @return  バッチクラスファイル名
      */
     public static function getNameBatchClass() {
-        return ConfigLandClassUpload::$name_batch_class;
+        return ConfigDisasterLandclassUpload::$name_batch_class;
     }
 	/**
      *
      * @return  エラーログファイル名
      */
     public static function getNameErrorLog() {
-        return ConfigLandClassUpload::$name_error_log;
+        return ConfigDisasterLandclassUpload::$name_error_log;
     }
 	/**
 	 * モデル名情報の取得関数
@@ -172,16 +172,16 @@ class ConfigLandClassUpload {
 	 */
 
 	public static function getNamePrefecturesMst() {
-	    return ConfigLandClassUpload::$name_prefectures_mst;
+	    return ConfigDisasterLandclassUpload::$name_prefectures_mst;
 	}
 	public static function getNameMunicipalityMst() {
-		return ConfigLandClassUpload::$name_municipality_mst;
+		return ConfigDisasterLandclassUpload::$name_municipality_mst;
 	}
 	public static function getNameLandClassData() {
-		return ConfigLandClassUpload::$name_landclass_data;
+		return ConfigDisasterLandclassUpload::$name_landclass_data;
 	}
 	public static function getNameLandClassMst() {
-		return ConfigLandClassUpload::$name_landclass_mst;
+		return ConfigDisasterLandclassUpload::$name_landclass_mst;
 	}
 
     //CSV名前情報
@@ -191,10 +191,10 @@ class ConfigLandClassUpload {
      * @return  $preg_csv_name_defined
      */
 	public static function getPregCsvLandClassname() {
-		return ConfigLandClassUpload::$preg_csv_landclass_name;
+		return ConfigDisasterLandclassUpload::$preg_csv_landclass_name;
 	}
 	public static function getPregCsvDisplayOrder() {
-		return ConfigLandClassUpload::$preg_csv_display_order;
+		return ConfigDisasterLandclassUpload::$preg_csv_display_order;
 	}
 
 	//CSV項目情報
@@ -205,7 +205,7 @@ class ConfigLandClassUpload {
      * @return  $name
      */
 	public static function getColName($col_num) {
-		return ConfigLandClassUpload::$col_names[$col_num];
+		return ConfigDisasterLandclassUpload::$col_names[$col_num];
 	}
 	/**
 	 * 各項目名(DB)取得関数
@@ -213,14 +213,14 @@ class ConfigLandClassUpload {
      * @return  $name
      */
 	public static function getColNameDB($col_num) {
-		return ConfigLandClassUpload::$col_names_DB[$col_num];
+		return ConfigDisasterLandclassUpload::$col_names_DB[$col_num];
 	}
 	/**
 	 * バリデーション条件の取得関数
      * @return  $name
      */
 	public static function getColPreg($col_num) {
-		return ConfigLandClassUpload::$col_pregs[$col_num];
+		return ConfigDisasterLandclassUpload::$col_pregs[$col_num];
 	}
 
 	//メッセージ情報
@@ -230,58 +230,58 @@ class ConfigLandClassUpload {
      * @return  $name
      */
 	public static function getColValidFailMsg($col_num) {
-		return ConfigLandClassUpload::$col_valid_fail_msgs[$col_num];
+		return ConfigDisasterLandclassUpload::$col_valid_fail_msgs[$col_num];
 	}
 	public static function getMsgCantBeNull(){
-		return ConfigLandClassUpload::$msg_cantbe_null;
+		return ConfigDisasterLandclassUpload::$msg_cantbe_null;
 	}
 	/**
 	 * メッセージ取得(ログファイル出力)
      * @return String
      */
-	public static function getMsgBatchfileBegin()	{ return ConfigLandClassUpload::$msg_batchfile_begin;}
-	public static function getMsgBatchfileDone()	{ return ConfigLandClassUpload::$msg_batchfile_done;}
+	public static function getMsgBatchfileBegin()	{ return ConfigDisasterLandclassUpload::$msg_batchfile_begin;}
+	public static function getMsgBatchfileDone()	{ return ConfigDisasterLandclassUpload::$msg_batchfile_done;}
 	/**
 	 * エラーメッセージ取得(ログファイル出力)
      * @return String
      */
-	public static function getErrorMsgIncludeFileLack() 				{ return ConfigLandClassUpload::$error_msg_include_file_lack;}
-	public static function getErrorMsgIncludeNotfoundPrefecturesMst() 	{ return ConfigLandClassUpload::$error_msg_include_notfound_prefectures_mst;}
-	public static function getErrorMsgIncludeNotfoundMunicipalityMst() 	{ return ConfigLandClassUpload::$error_msg_include_notfound_municipality_mst;}
-	public static function getErrorMsgIncludeNotfoundLandClassData()	{ return ConfigLandClassUpload::$error_msg_include_notfound_landclass_data;}
-	public static function getErrorMsgIncludeNotfoundLandClassMst()	{ return ConfigLandClassUpload::$error_msg_include_notfound_landclass_mst;}
-	public static function getErrorMsgBatchfileName() 					{ return ConfigLandClassUpload::$error_msg_batchfile_name;}
-	public static function getErrorMsgIsProcessing() 					{ return ConfigLandClassUpload::$error_msg_is_processing;}
-	public static function getErrorMsgCsvNotfound() 					{ return ConfigLandClassUpload::$error_msg_csv_notfound;}
-	public static function getErrorMsgCsvFoundMulti() 					{ return ConfigLandClassUpload::$error_msg_csv_found_multi;}
-	public static function getErrorMsgBatchSuccessDeleteFail() 			{ return ConfigLandClassUpload::$error_msg_batch_success_delete_fail;}
-	public static function getErrorMsgCsvNameNotcorrect() 				{ return ConfigLandClassUpload::$error_msg_csv_name_notcorrect;}
-	public static function getErrorMsgCsvIsempty() 						{ return ConfigLandClassUpload::$error_msg_csv_isempty;}
-	public static function getErrorMsgCsvrowFormat() 					{ return ConfigLandClassUpload::$error_msg_csvrow_format;}
-	public static function getErrorMsgDBconnectFail() 					{ return ConfigLandClassUpload::$error_msg_dbconnect_fail;}
-	public static function getErrorMsgTransactionFail() 				{ return ConfigLandClassUpload::$error_msg_transaction_fail;}
-	public static function getErrorMsgTabledeleteFail() 				{ return ConfigLandClassUpload::$error_msg_tabledelete_fail;}
-	public static function getErrorMsgTableinsertFailExist()			{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_exist;}
-	public static function getErrorMsgTableinsertFailSameLandClassName()		{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_same_landclass_name;}
-	public static function getErrorMsgTableinsertFailDisplayOrder()		{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_display_order;}
-	public static function getErrorMsgTableinsertFailLandClassMst()		{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_landclass_mst;}
-	public static function getErrorMsgTableinsertFailLandClassData()	{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_landclass_data;}
-	public static function getErrorMsgTableinsertFailPrefecturesMst() 	{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_prefectures_mst;}
-	public static function getErrorMsgTableinsertFailMunicipalityMst() 	{ return ConfigLandClassUpload::$error_msg_tableinsert_fail_municipality_mst;}
-	public static function getErrorMsg() 								{ return ConfigLandClassUpload::$error_msg_;}
+	public static function getErrorMsgIncludeFileLack() 				{ return ConfigDisasterLandclassUpload::$error_msg_include_file_lack;}
+	public static function getErrorMsgIncludeNotfoundPrefecturesMst() 	{ return ConfigDisasterLandclassUpload::$error_msg_include_notfound_prefectures_mst;}
+	public static function getErrorMsgIncludeNotfoundMunicipalityMst() 	{ return ConfigDisasterLandclassUpload::$error_msg_include_notfound_municipality_mst;}
+	public static function getErrorMsgIncludeNotfoundLandClassData()	{ return ConfigDisasterLandclassUpload::$error_msg_include_notfound_landclass_data;}
+	public static function getErrorMsgIncludeNotfoundLandClassMst()	{ return ConfigDisasterLandclassUpload::$error_msg_include_notfound_landclass_mst;}
+	public static function getErrorMsgBatchfileName() 					{ return ConfigDisasterLandclassUpload::$error_msg_batchfile_name;}
+	public static function getErrorMsgIsProcessing() 					{ return ConfigDisasterLandclassUpload::$error_msg_is_processing;}
+	public static function getErrorMsgCsvNotfound() 					{ return ConfigDisasterLandclassUpload::$error_msg_csv_notfound;}
+	public static function getErrorMsgCsvFoundMulti() 					{ return ConfigDisasterLandclassUpload::$error_msg_csv_found_multi;}
+	public static function getErrorMsgBatchSuccessDeleteFail() 			{ return ConfigDisasterLandclassUpload::$error_msg_batch_success_delete_fail;}
+	public static function getErrorMsgCsvNameNotcorrect() 				{ return ConfigDisasterLandclassUpload::$error_msg_csv_name_notcorrect;}
+	public static function getErrorMsgCsvIsempty() 						{ return ConfigDisasterLandclassUpload::$error_msg_csv_isempty;}
+	public static function getErrorMsgCsvrowFormat() 					{ return ConfigDisasterLandclassUpload::$error_msg_csvrow_format;}
+	public static function getErrorMsgDBconnectFail() 					{ return ConfigDisasterLandclassUpload::$error_msg_dbconnect_fail;}
+	public static function getErrorMsgTransactionFail() 				{ return ConfigDisasterLandclassUpload::$error_msg_transaction_fail;}
+	public static function getErrorMsgTabledeleteFail() 				{ return ConfigDisasterLandclassUpload::$error_msg_tabledelete_fail;}
+	public static function getErrorMsgTableinsertFailExist()			{ return ConfigDisasterLandclassUpload::$error_msg_tableinsert_fail_exist;}
+	public static function getErrorMsgTableinsertFailSameLandClassName()		{ return ConfigDisasterLandclassUpload::$error_msg_tableinsert_fail_same_landclass_name;}
+	public static function getErrorMsgTableinsertFailDisplayOrder()		{ return ConfigDisasterLandclassUpload::$error_msg_tableinsert_fail_display_order;}
+	public static function getErrorMsgTableinsertFailLandClassMst()		{ return ConfigDisasterLandclassUpload::$error_msg_tableinsert_fail_landclass_mst;}
+	public static function getErrorMsgTableinsertFailLandClassData()	{ return ConfigDisasterLandclassUpload::$error_msg_tableinsert_fail_landclass_data;}
+	public static function getErrorMsgTableinsertFailPrefecturesMst() 	{ return ConfigDisasterLandclassUpload::$error_msg_tableinsert_fail_prefectures_mst;}
+	public static function getErrorMsgTableinsertFailMunicipalityMst() 	{ return ConfigDisasterLandclassUpload::$error_msg_tableinsert_fail_municipality_mst;}
+	public static function getErrorMsg() 								{ return ConfigDisasterLandclassUpload::$error_msg_;}
 
 	/**
 	 * メッセージ取得（コンソール出力)
      * @return String
      */
-	public static function getMsgBatchSuccess() { return ConfigLandClassUpload::$msg_batch_success;}
-	public static function getMsgBatchSuccessDeleteFail() { return ConfigLandClassUpload::$msg_batch_success_delete_fail; }
-	public static function getMsgFileNotfound()	{ return ConfigLandClassUpload::$msg_file_notfound;}
-	public static function getMsgOperationFail(){ return ConfigLandClassUpload::$msg_operation_fail;}
-	public static function getMsgCsvNameError() { return ConfigLandClassUpload::$msg_csv_name_error;}
-	public static function getMsgFileFoundMulti(){return ConfigLandClassUpload::$msg_file_found_multi;}
-	public static function getMsgDataError() 	{ return ConfigLandClassUpload::$msg_data_error;}
-	public static function getMsgFatalError() 	{ return ConfigLandClassUpload::$msg_fatal_error;}
+	public static function getMsgBatchSuccess() { return ConfigDisasterLandclassUpload::$msg_batch_success;}
+	public static function getMsgBatchSuccessDeleteFail() { return ConfigDisasterLandclassUpload::$msg_batch_success_delete_fail; }
+	public static function getMsgFileNotfound()	{ return ConfigDisasterLandclassUpload::$msg_file_notfound;}
+	public static function getMsgOperationFail(){ return ConfigDisasterLandclassUpload::$msg_operation_fail;}
+	public static function getMsgCsvNameError() { return ConfigDisasterLandclassUpload::$msg_csv_name_error;}
+	public static function getMsgFileFoundMulti(){return ConfigDisasterLandclassUpload::$msg_file_found_multi;}
+	public static function getMsgDataError() 	{ return ConfigDisasterLandclassUpload::$msg_data_error;}
+	public static function getMsgFatalError() 	{ return ConfigDisasterLandclassUpload::$msg_fatal_error;}
 
 
 }

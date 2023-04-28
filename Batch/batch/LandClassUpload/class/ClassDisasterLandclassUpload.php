@@ -6,7 +6,7 @@
 　* 更新2023/04/25
  * バッチ処理実行クラス
  */
-class ClassLandClassUpload {
+class ClassDisasterLandclassUpload {
 	private $dbh        		= null;
 	private $filepath_csv 		= null;
 	private $input_file			= null;
@@ -34,24 +34,24 @@ class ClassLandClassUpload {
 	function __construct() {
 
 		//includeファイル存在チェック
-		if(!include_once(PATH_PREFECTURES_MST.ConfigLandClassUpload::getNamePrefecturesMst())){
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgIncludeNotfoundPrefecturesMst(), CONFIG::$LOG_LEVEL_FATAL);
+		if(!include_once(PATH_PREFECTURES_MST.ConfigDisasterLandclassUpload::getNamePrefecturesMst())){
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgIncludeNotfoundPrefecturesMst(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 		}
-		if(!include_once(PATH_MUNICIPALITY_MST.ConfigLandClassUpload::getNameMunicipalityMst())){
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgIncludeNotfoundMunicipalityMst(), CONFIG::$LOG_LEVEL_FATAL);
+		if(!include_once(PATH_MUNICIPALITY_MST.ConfigDisasterLandclassUpload::getNameMunicipalityMst())){
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgIncludeNotfoundMunicipalityMst(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 		}
-		if(!include_once(PATH_LANDCLASS_DATA.ConfigLandClassUpload::getNameLandClassData())) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgIncludeNotfoundLandClassData(), CONFIG::$LOG_LEVEL_FATAL);
+		if(!include_once(PATH_LANDCLASS_DATA.ConfigDisasterLandclassUpload::getNameLandClassData())) {
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgIncludeNotfoundLandClassData(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 		}
-		if(!include_once(PATH_LANDCLASS_MST.ConfigLandClassUpload::getNameLandClassMst())) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgIncludeNotfoundLandClassMst(), CONFIG::$LOG_LEVEL_FATAL);
+		if(!include_once(PATH_LANDCLASS_MST.ConfigDisasterLandclassUpload::getNameLandClassMst())) {
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgIncludeNotfoundLandClassMst(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 		}
 		if(!$this->checkErrorFlg()) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgIncludeFileLack(), CONFIG::$LOG_LEVEL_NULL);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgIncludeFileLack(), CONFIG::$LOG_LEVEL_NULL);
 			$this->closeBatch();
 		}
 	}
@@ -59,7 +59,7 @@ class ClassLandClassUpload {
 	public function execFlow() {
 		$is_error = false;
 
-		$this->addErrorLogMessage(ConfigLandClassUpload::getMsgBatchFileBegin(), CONFIG::$LOG_LEVEL_INFO);
+		$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getMsgBatchFileBegin(), CONFIG::$LOG_LEVEL_INFO);
 		$this->setFilepathCSV(PATH_CSV);
 
 		//プロセスに失敗した場合、その時点でクローズする。
@@ -101,8 +101,8 @@ class ClassLandClassUpload {
 
 		$this->files = glob($this->getFilepathCSV().'*');
 		if (1 > count($this->files)) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvNotfound().$this->getInputFile(), CONFIG::$LOG_LEVEL_WARN);
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgFileNotfound());
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgCsvNotfound().$this->getInputFile(), CONFIG::$LOG_LEVEL_WARN);
+			$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgFileNotfound());
 			//$this->setFlgFileNotFound(true);
 			$this->closeBatch();
 			$is_error = true;
@@ -145,13 +145,13 @@ class ClassLandClassUpload {
 			if(!$result && $this->num == count($this->files)-1 ) {
 				//削除失敗
 				$is_error = true;
-				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgBatchSuccessDeleteFail(), CONFIG::$LOG_LEVEL_INFO);
-				$this->addConsoleMessage(ConfigLandClassUpload::getMsgBatchSuccessDeleteFail());
+				$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgBatchSuccessDeleteFail(), CONFIG::$LOG_LEVEL_INFO);
+				$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgBatchSuccessDeleteFail());
 			}
 			if(!$is_error && $this->num == count($this->files)-1 ) {
 				//正常完了
-				$this->addErrorLogMessage(ConfigLandClassUpload::getMsgBatchFileDone(), CONFIG::$LOG_LEVEL_INFO);
-				$this->addConsoleMessage(ConfigLandClassUpload::getMsgBatchSuccess());
+				$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getMsgBatchFileDone(), CONFIG::$LOG_LEVEL_INFO);
+				$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgBatchSuccess());
 			}
 		}
 
@@ -172,8 +172,8 @@ class ClassLandClassUpload {
 		$ret = false;
 
 		//バッチファイル名が指定したものと不一致なら、処理終了
-		if(basename($_SERVER['PHP_SELF']) != ConfigLandClassUpload::getNameExec()) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgBatchfileName(), CONFIG::$LOG_LEVEL_WARN);
+		if(basename($_SERVER['PHP_SELF']) != ConfigDisasterLandclassUpload::getNameExec()) {
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgBatchfileName(), CONFIG::$LOG_LEVEL_WARN);
 			$this->setFlgOperationFail(true);
 			return $ret;
 		}
@@ -196,7 +196,7 @@ class ClassLandClassUpload {
 		$this->deletefiles = $setfiles;
 
 		if (1 > count($this->files)) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvNotfound().$this->getInputFile(), CONFIG::$LOG_LEVEL_WARN);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgCsvNotfound().$this->getInputFile(), CONFIG::$LOG_LEVEL_WARN);
 			$this->setFlgFileNotFound(true);
 			$is_error = true;
 			return !$is_error;
@@ -258,7 +258,7 @@ class ClassLandClassUpload {
 				}
 			}
 			if($row_valid_fail) {
-				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvrowFormat().($i+1), CONFIG::$LOG_LEVEL_ERROR);
+				$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgCsvrowFormat().($i+1), CONFIG::$LOG_LEVEL_ERROR);
 				$this->setFlgDataError(true);
 				$is_error = true;
 			}
@@ -279,11 +279,11 @@ class ClassLandClassUpload {
 
 			} else {
 				$this->getDBH()->rollBack();
-				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTransactionFail(), CONFIG::$LOG_LEVEL_FATAL);
+				$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTransactionFail(), CONFIG::$LOG_LEVEL_FATAL);
 				$this->setFlgFatalError(true);
 				$is_error = true;
 			}
-		} catch (Exception $e) { $this->getDBH()->rollBack(); $this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTransactionFail(), CONFIG::$LOG_LEVEL_FATAL); $is_error = true;}
+		} catch (Exception $e) { $this->getDBH()->rollBack(); $this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTransactionFail(), CONFIG::$LOG_LEVEL_FATAL); $is_error = true;}
 
 		return !$is_error;
 	}
@@ -312,7 +312,7 @@ class ClassLandClassUpload {
 
 		// 2以上なら別の処理が実行中と判断（自身+同名の別のバッチ処理の計）
 		if (count($output) >= 2) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgIsProcessing(), CONFIG::$LOG_LEVEL_WARN);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgIsProcessing(), CONFIG::$LOG_LEVEL_WARN);
 			$this->setFlgOperationFail(true);
 			return $is_processing;
 		} else {
@@ -334,7 +334,7 @@ class ClassLandClassUpload {
 		try {
 			$file_obj = new SplFileObject($this->getInputFile(), $open_mode = 'r');
 		} catch (Exception $e ) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvNotfound().$this->getInputFile(), CONFIG::$LOG_LEVEL_WARN);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgCsvNotfound().$this->getInputFile(), CONFIG::$LOG_LEVEL_WARN);
 			$this->setFlgFileNotFound(true);
 			$is_error = true;
 			return !$is_error;
@@ -369,12 +369,12 @@ class ClassLandClassUpload {
 		$this->landclass_csvname = mb_convert_encoding($landclass_csvname, "UTF-8","shift-jis");
 
 		//等地名のチェック
-		if(!preg_match(ConfigLandClassUpload::getPregCsvLandClassname(),$this->landclass_csvname)) {
+		if(!preg_match(ConfigDisasterLandclassUpload::getPregCsvLandClassname(),$this->landclass_csvname)) {
 			$is_error = true;
 		}
 
 		//表示順をチェック
-		if(!preg_match(ConfigLandClassUpload::getPregCsvDisplayOrder(),$display_order)) {
+		if(!preg_match(ConfigDisasterLandclassUpload::getPregCsvDisplayOrder(),$display_order)) {
 			$is_error = true;
 		}
 
@@ -383,7 +383,7 @@ class ClassLandClassUpload {
 
 		if($is_error) {
 			//エラーメッセージ記録
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvNameNotcorrect(), CONFIG::$LOG_LEVEL_ERROR);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgCsvNameNotcorrect(), CONFIG::$LOG_LEVEL_ERROR);
 			$this->setFlgCsvNameError(true);
 		}
 
@@ -400,7 +400,7 @@ class ClassLandClassUpload {
 		//ファイルが空か？
 		if(!isset($csv_filetable_array[1][0])) {
 			$is_error = true;
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgCsvIsempty(), CONFIG::$LOG_LEVEL_ERROR);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgCsvIsempty(), CONFIG::$LOG_LEVEL_ERROR);
 			$this->setFlgDataError(true);
 		}
 		return !$is_error;
@@ -417,16 +417,16 @@ class ClassLandClassUpload {
 		//空ではない
 		if(isset($col_data) && $col_data != ''){
 			//フォーマットチェック
-			if(!preg_match(ConfigLandClassUpload::getColPreg($col_num), $col_data)) {
+			if(!preg_match(ConfigDisasterLandclassUpload::getColPreg($col_num), $col_data)) {
 				$is_error = true;
-				$this->addErrorLogMessage(ConfigLandClassUpload::getColName($col_num).' : '.ConfigLandClassUpload::getColValidFailMsg($col_num), CONFIG::$LOG_LEVEL_ERROR);
+				$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getColName($col_num).' : '.ConfigDisasterLandclassUpload::getColValidFailMsg($col_num), CONFIG::$LOG_LEVEL_ERROR);
 				$this->setFlgDataError(true);
 			}
 		}
 		//空を許可する項目か？
 		else {
 			$is_error = true;
-			$this->addErrorLogMessage(ConfigLandClassUpload::getColName($col_num).' : '.ConfigLandClassUpload::getMsgCantBeNull(), CONFIG::$LOG_LEVEL_ERROR);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getColName($col_num).' : '.ConfigDisasterLandclassUpload::getMsgCantBeNull(), CONFIG::$LOG_LEVEL_ERROR);
 			$this->setFlgDataError(true);
 		}
 		return !$is_error;
@@ -511,7 +511,7 @@ class ClassLandClassUpload {
 			$landclass_count = array_count_values($this->landclass_names);
 			$max = max($landclass_count);
 			if ($max != 1){
-				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailSameLandClassName(), CONFIG::$LOG_LEVEL_FATAL);
+				$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTableinsertFailSameLandClassName(), CONFIG::$LOG_LEVEL_FATAL);
 				$this->setFlgFileFoundMulti(true);
 				return false;
 			}
@@ -520,7 +520,7 @@ class ClassLandClassUpload {
 			$order_count = array_count_values($this->display_orders);
 			$max = max($order_count);
 			if ($max != 1){
-				$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailDisplayOrder(), CONFIG::$LOG_LEVEL_FATAL);
+				$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTableinsertFailDisplayOrder(), CONFIG::$LOG_LEVEL_FATAL);
 				$this->setFlgFileFoundMulti(true);
 				return false;
 			}
@@ -590,8 +590,8 @@ class ClassLandClassUpload {
 		try {
 			$pdo = new PDO($dsn, $user, $pass,$array);
 		} catch (PDOException $e) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgDBconnectFail(), CONFIG::$LOG_LEVEL_FATAL);
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgFatalError());
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgDBconnectFail(), CONFIG::$LOG_LEVEL_FATAL);
+			$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgFatalError());
 			$this->setFlgFatalError(true);
 			return $ret;
 		}
@@ -609,25 +609,25 @@ class ClassLandClassUpload {
 		$ret = false;
 
 		$this->setPrefecturesMst(new PrefecturesMst());
-			$this->getPrefecturesMst()->setColumnValue('cre_usr',ConfigLandClassUpload::getCreateUser());
-			$this->getPrefecturesMst()->setColumnValue('cre_prg',ConfigLandClassUpload::getCreateProgram());
-			$this->getPrefecturesMst()->setColumnValue('upd_usr',ConfigLandClassUpload::getUpdateUser());
-			$this->getPrefecturesMst()->setColumnValue('upd_prg',ConfigLandClassUpload::getUpdateProgram());
+			$this->getPrefecturesMst()->setColumnValue('cre_usr',ConfigDisasterLandclassUpload::getCreateUser());
+			$this->getPrefecturesMst()->setColumnValue('cre_prg',ConfigDisasterLandclassUpload::getCreateProgram());
+			$this->getPrefecturesMst()->setColumnValue('upd_usr',ConfigDisasterLandclassUpload::getUpdateUser());
+			$this->getPrefecturesMst()->setColumnValue('upd_prg',ConfigDisasterLandclassUpload::getUpdateProgram());
 		$this->setMunicipalityMst(new MunicipalityMst());
-			$this->getMunicipalityMst()->setColumnValue('cre_usr',ConfigLandClassUpload::getCreateUser());
-			$this->getMunicipalityMst()->setColumnValue('cre_prg',ConfigLandClassUpload::getCreateProgram());
-			$this->getMunicipalityMst()->setColumnValue('upd_usr',ConfigLandClassUpload::getUpdateUser());
-			$this->getMunicipalityMst()->setColumnValue('upd_prg',ConfigLandClassUpload::getUpdateProgram());
+			$this->getMunicipalityMst()->setColumnValue('cre_usr',ConfigDisasterLandclassUpload::getCreateUser());
+			$this->getMunicipalityMst()->setColumnValue('cre_prg',ConfigDisasterLandclassUpload::getCreateProgram());
+			$this->getMunicipalityMst()->setColumnValue('upd_usr',ConfigDisasterLandclassUpload::getUpdateUser());
+			$this->getMunicipalityMst()->setColumnValue('upd_prg',ConfigDisasterLandclassUpload::getUpdateProgram());
 		$this->setLandClassData(new LandClassData());
-			$this->getLandClassData()->setColumnValue('cre_usr',ConfigLandClassUpload::getCreateUser());
-			$this->getLandClassData()->setColumnValue('cre_prg',ConfigLandClassUpload::getCreateProgram());
-			$this->getLandClassData()->setColumnValue('upd_usr',ConfigLandClassUpload::getUpdateUser());
-			$this->getLandClassData()->setColumnValue('upd_prg',ConfigLandClassUpload::getUpdateProgram());
+			$this->getLandClassData()->setColumnValue('cre_usr',ConfigDisasterLandclassUpload::getCreateUser());
+			$this->getLandClassData()->setColumnValue('cre_prg',ConfigDisasterLandclassUpload::getCreateProgram());
+			$this->getLandClassData()->setColumnValue('upd_usr',ConfigDisasterLandclassUpload::getUpdateUser());
+			$this->getLandClassData()->setColumnValue('upd_prg',ConfigDisasterLandclassUpload::getUpdateProgram());
 		$this->setLandClassMst(new LandClassMst());
-			$this->getLandClassMst()->setColumnValue('cre_usr',ConfigLandClassUpload::getCreateUser());
-			$this->getLandClassMst()->setColumnValue('cre_prg',ConfigLandClassUpload::getCreateProgram());
-			$this->getLandClassMst()->setColumnValue('upd_usr',ConfigLandClassUpload::getUpdateUser());
-			$this->getLandClassMst()->setColumnValue('upd_prg',ConfigLandClassUpload::getUpdateProgram());
+			$this->getLandClassMst()->setColumnValue('cre_usr',ConfigDisasterLandclassUpload::getCreateUser());
+			$this->getLandClassMst()->setColumnValue('cre_prg',ConfigDisasterLandclassUpload::getCreateProgram());
+			$this->getLandClassMst()->setColumnValue('upd_usr',ConfigDisasterLandclassUpload::getUpdateUser());
+			$this->getLandClassMst()->setColumnValue('upd_prg',ConfigDisasterLandclassUpload::getUpdateProgram());
 		$ret = true;
 		return $ret;
 	}
@@ -649,7 +649,7 @@ class ClassLandClassUpload {
 		if(!($this->getLandClassMst()!= null || $this->getLandClassMst()instanceof LandClass)) $is_error = true;
 
 		if($is_error) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTabledeleteFail(), CONFIG::$LOG_LEVEL_FATAL);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTabledeleteFail(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 			return !$is_error;
 		}
@@ -666,7 +666,7 @@ class ClassLandClassUpload {
 		if(!$ret) $is_error = true;
 
 		if($is_error) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTabledeleteFail(), CONFIG::$LOG_LEVEL_FATAL);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTabledeleteFail(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 		}
 
@@ -681,13 +681,13 @@ class ClassLandClassUpload {
 		$ret = false;
 		$landclass_data = $this->getLandClassData();
 		for($i = 0; $i<sizeof($add_record); $i++) {
-			$landclass_data->setColumnValue(ConfigLandClassUpload::getColNameDB($i),$add_record[$i]);
+			$landclass_data->setColumnValue(ConfigDisasterLandclassUpload::getColNameDB($i),$add_record[$i]);
 		}
 
 		$result = $landclass_data->insertRecord($this->getDBH());
 
 		if(!$result) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailLandClassData(), CONFIG::$LOG_LEVEL_FATAL);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTableinsertFailLandClassData(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 			return $ret;
 		}
@@ -707,7 +707,7 @@ class ClassLandClassUpload {
 		$result = $this->getLandClassMst()->insertRecord($this->getDBH());
 
 		if(!$result) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailLandClassMst(), CONFIG::$LOG_LEVEL_FATAL);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTableinsertFailLandClassMst(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 			return $ret;
 		}
@@ -723,14 +723,14 @@ class ClassLandClassUpload {
 		$ret = false;
 
 		$landclass_data = $this->getLandClassData();
-		$landclass_data->setColumnValue(ConfigLandClassUpload::getColNameDB(0),$prefectures_name);
-		$landclass_data->setColumnValue(ConfigLandClassUpload::getColNameDB(1),$municipality_name);
-		$landclass_data->setColumnValue(ConfigLandClassUpload::getColNameDB(3),$landclass_name);
+		$landclass_data->setColumnValue(ConfigDisasterLandclassUpload::getColNameDB(0),$prefectures_name);
+		$landclass_data->setColumnValue(ConfigDisasterLandclassUpload::getColNameDB(1),$municipality_name);
+		$landclass_data->setColumnValue(ConfigDisasterLandclassUpload::getColNameDB(3),$landclass_name);
 
 
 		$is_exist = $landclass_data->isExist($this->getDBH());
 		if($is_exist) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailExist().$prefectures_name.', '.$municipality_name.', '.$landclass_name, CONFIG::$LOG_LEVEL_ERROR);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTableinsertFailExist().$prefectures_name.', '.$municipality_name.', '.$landclass_name, CONFIG::$LOG_LEVEL_ERROR);
 			$this->setFlgFatalError(true);
 			$ret = true;
 			return $ret;
@@ -751,7 +751,7 @@ class ClassLandClassUpload {
 		$this->getPrefecturesMst()->setColumnValue('prefectures',$prefectures_name);
 		$result = $this->getPrefecturesMst()->insertRecord($this->getDBH());
 		if(!$result) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailPrefecturesMst(), CONFIG::$LOG_LEVEL_FATAL);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTableinsertFailPrefecturesMst(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 			return $ret;
 		}
@@ -772,7 +772,7 @@ class ClassLandClassUpload {
 
 		$result = $this->getMunicipalityMst()->insertRecord($this->getDBH());
 		if(!$result) {
-			$this->addErrorLogMessage(ConfigLandClassUpload::getErrorMsgTableinsertFailMunicipalityMst(), CONFIG::$LOG_LEVEL_FATAL);
+			$this->addErrorLogMessage(ConfigDisasterLandclassUpload::getErrorMsgTableinsertFailMunicipalityMst(), CONFIG::$LOG_LEVEL_FATAL);
 			$this->setFlgFatalError(true);
 			return $ret;
 		}
@@ -809,7 +809,7 @@ class ClassLandClassUpload {
 			try{
 				$date = $now->format('Y-m-d H:i:s');
 				$log = $date ." [" .$msg['level']. "] " .$msg['message']. PHP_EOL;
-				error_log($log, 3, PATH_ERROR_LOG.ConfigLandClassUpload::getNameErrorLog());
+				error_log($log, 3, PATH_ERROR_LOG.ConfigDisasterLandclassUpload::getNameErrorLog());
 			} catch (Exception $e) {}
 		}
 
@@ -856,32 +856,32 @@ class ClassLandClassUpload {
 		$is_error = false;
 
 		if($this->getFlgFileNotFound()){
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgFileNotfound());
+			$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgFileNotfound());
 			$is_error = true;
 			return !$is_error;
 		}
 		if($this->getFlgOperationFail()){
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgOperationFail());
+			$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgOperationFail());
 			$is_error = true;
 			return !$is_error;
 		}
 		if($this->getFlgCsvNameError()){
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgCsvNameError());
+			$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgCsvNameError());
 			$is_error = true;
 			return !$is_error;
 		}
 		if($this->getFlgFileFoundMulti()){
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgFileFoundMulti());
+			$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgFileFoundMulti());
 			$is_error = true;
 			return !$is_error;
 		}
 		if($this->getFlgDataError()){
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgDataError());
+			$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgDataError());
 			$is_error = true;
 			return !$is_error;
 		}
 		if($this->getFlgFatalError()){
-			$this->addConsoleMessage(ConfigLandClassUpload::getMsgFatalError());
+			$this->addConsoleMessage(ConfigDisasterLandclassUpload::getMsgFatalError());
 			$is_error = true;
 			return !$is_error;
 		}

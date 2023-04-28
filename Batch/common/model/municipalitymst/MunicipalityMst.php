@@ -5,7 +5,7 @@
  * 更新 2023/04/28
  *
  */
- include_once(__DIR__. '/../Landclass.php');
+ include_once(__DIR__. '/../Model.php');
 
 class MunicipalityMst extends Model {
 
