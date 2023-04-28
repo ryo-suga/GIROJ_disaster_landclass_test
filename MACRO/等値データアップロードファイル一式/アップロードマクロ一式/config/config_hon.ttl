@@ -1,10 +1,10 @@
 ; *************************************
 ; ïœêîê›íË
 ; *************************************
-username = 'batch'
+username = 'landclass_batch'
 passwdname = 'hon'
 hostname = '192.168.220.7'
 port = '10022'
 passwdfile = 'password_hon.ini'
 waitprompt = '-bash-4.1$'
-shell = '/var/www/web/batch/www/root/php-work/batch/modelupload/ModelUpload.sh'
+shell = '/var/www/web/landclass_batch/www/root/php-work/batch/LandClassUpload/DisasterLandclassUpload.sh'
