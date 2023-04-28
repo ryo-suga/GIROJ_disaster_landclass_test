@@ -2,10 +2,10 @@
 
 /**
  * 市区町村マスタ管理クラス
- * 更新 2023/04/21
+ * 更新 2023/04/28
  *
  */
- include_once(__DIR__. '/../Model.php');
+ include_once(__DIR__. '/../Landclass.php');
 
 class MunicipalityMst extends Model {
 
