@@ -26,6 +26,7 @@
 		<?php echo $this->element(PAGE_TOP);?>		
 		<?php include(FOOTER); ?>
 	</div>
+	</div>
 	<!--sp-->
 		<?php include(NAV_SP); ?>
 </body>
