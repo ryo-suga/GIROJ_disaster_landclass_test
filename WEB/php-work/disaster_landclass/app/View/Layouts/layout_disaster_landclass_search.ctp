@@ -8,7 +8,7 @@
 </head>
 
 <body id="ratemaking" class="r-touchi">
-	<div id="contaner" class="automobileMenu">
+	<div id="contaner" class="fireMenu">
 	<div id="overlay"></div>
 		
 		<!--ボディヘッダー部-->
