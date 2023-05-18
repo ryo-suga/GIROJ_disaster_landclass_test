@@ -563,8 +563,10 @@ class ClassDisasterLandclassUpload {
 
 		//都道府県・市区町村をDB登録
 		//-------------------------------------------------------------------------------------
+		$priority = 0;
 		foreach($namelist_prefectures_municipality as $add_record ) {
-			$result = $this->insertMunicipalityMst($add_record);
+			$result = $this->insertMunicipalityMst($add_record, $priority);
+			++$priority;
 			if(!$result) {
 				$this->addErrorLogMessage($add_record[0].' '.$add_record[1], CONFIG::$LOG_LEVEL_FATAL);
 				$this->setFlgFatalError(true);
@@ -764,11 +766,12 @@ class ClassDisasterLandclassUpload {
 	 * 市区町村マスター登録
 	 * @return boolean 処理結果 完了:true
 	 */
-	public function insertMunicipalityMst($add_record) {
+	public function insertMunicipalityMst($add_record, $priority) {
 		$ret = false;
 
 		$this->getMunicipalityMst()->setColumnValue('prefectures',$add_record['prefectures']);
 		$this->getMunicipalityMst()->setColumnValue('municipality',$add_record['municipality']);
+		$this->getMunicipalityMst()->setColumnValue('priority',$priority);
 
 		$result = $this->getMunicipalityMst()->insertRecord($this->getDBH());
 		if(!$result) {

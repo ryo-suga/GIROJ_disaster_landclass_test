@@ -14,5 +14,6 @@ class MunicipalityMst extends Model {
 		$this->setTableName('tbl_municipality_mst');
 		$this->setColumnName('prefectures');
 		$this->setColumnName('municipality');
+		$this->setColumnName('priority');
 	}
 }

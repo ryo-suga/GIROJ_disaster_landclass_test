@@ -206,7 +206,7 @@ class SearchController extends AppController{
 		//-----------------------------------------------------------------------------------------
 		$municipality = array();
 		$fields = array('municipality');
-		$order 	= array('municipality asc');
+		$order 	= array('priority asc');
 		$conditions = array('prefectures'=> $form_info['prefectures']); 
 		$result = true;
 		$result = $this->_selectMunicipalityMst($fields, $order, $conditions, $municipality);
