@@ -218,6 +218,8 @@ function backPage() {
 			$('.searchTArea').hide();
 			$('.searchTDetail').hide();
 			displaying_page = PAGE_CONDITION;
+			//スクロール
+			$(window).scrollTop('#main');
 			break;
 		case PAGE_DETAIL:
 			var prefectures = target[1][0];
