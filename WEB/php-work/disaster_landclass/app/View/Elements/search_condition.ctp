@@ -1,6 +1,6 @@
 					<div class="searchKataArea">
 						<section class="search01">
-							<p><strong>都道府県を選択してください。</strong></p>
+							<p><strong>都道府県および市区町村を選択してください</strong></p>
 							
 							<!--都道府県リスト-->
 							<?php

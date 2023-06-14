@@ -21,8 +21,8 @@
 												<th>等地</th>
 											</tr>
 											<tr id="landClassItem0" style ="display:none;">
-												<td id="landClassName0">テスト</td>
-												<td id="landClass0">2</td>
+												<td id="landClassName0"></td>
+												<td id="landClass0"></td>
 											</tr>
 											<tr id="landClassItem1" style ="display:none;">
 												<td id="landClassName1"></td>
